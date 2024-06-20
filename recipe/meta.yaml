@@ -1,0 +1,141 @@
+{% set name = "qtbase" %}
+{% set version = "6.7.2" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+source:
+  - url: https://download.qt.io/official_releases/qt/{{ version.rpartition('.')[0] }}/{{ version }}/submodules/{{ name }}-everywhere-src-{{ version }}.tar.xz
+    sha256: c5f22a5e10fb162895ded7de0963328e7307611c688487b5d152c9ee64767599
+    folder: {{ name }}
+    patches:
+      - 0001-Disable-unity-build-for-permission-plugins-in-macos.patch
+
+build:
+  number: 0
+  skip: True  # [win or (osx and x86_64) or s390x]
+  run_exports:
+    - {{ pin_subpackage('qtbase', max_pin='x.x') }}
+  ignore_run_exports:
+    - dbus    # [unix]
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - {{ cdt('alsa-lib-devel') }}             # [linux]
+    - {{ cdt('gtk2-devel') }}                 # [linux]
+    - {{ cdt('gtkmm24-devel') }}              # [linux]
+    - {{ cdt('libdrm-devel') }}               # [linux]
+    - {{ cdt('libglvnd-glx') }}               # [linux and not x86_64]
+    - {{ cdt('libglvnd-egl') }}               # [linux and not x86_64]
+    - {{ cdt('libice-devel') }}               # [linux]
+    - {{ cdt('libsm-devel') }}                # [linux]
+    - {{ cdt('libx11-devel') }}               # [linux]
+    - {{ cdt('libxau-devel') }}               # [linux]
+    - {{ cdt('libxcb') }}                     # [linux]
+    - {{ cdt('libxcomposite-devel') }}        # [linux]
+    - {{ cdt('libxcursor-devel') }}           # [linux]
+    - {{ cdt('libxdamage-devel') }}           # [linux]
+    - {{ cdt('libxext-devel') }}              # [linux]
+    - {{ cdt('libxfixes-devel') }}            # [linux]
+    - {{ cdt('libxi-devel') }}                # [linux]
+    - {{ cdt('libxrandr-devel') }}            # [linux]
+    - {{ cdt('libxrender-devel') }}           # [linux]
+    - {{ cdt('libxscrnsaver-devel') }}        # [linux]
+    - {{ cdt('libxtst-devel') }}              # [linux]
+    - {{ cdt('libxxf86vm-devel') }}           # [linux]
+    - {{ cdt('mesa-libgl-devel') }}           # [linux]
+    - {{ cdt('mesa-libgbm') }}                # [linux]
+    - {{ cdt('mesa-libegl-devel') }}          # [linux]
+    - {{ cdt('mesa-dri-drivers') }}           # [linux]
+    - {{ cdt('xcb-util-devel') }}             # [linux]
+    - {{ cdt('xcb-util-image-devel') }}       # [linux]
+    - {{ cdt('xcb-util-keysyms-devel') }}     # [linux]
+    - {{ cdt('xcb-util-renderutil-devel') }}  # [linux]
+    - {{ cdt('xcb-util-wm-devel') }}          # [linux]
+    - {{ cdt('xorg-x11-proto-devel') }}       # [linux]
+    - patch       # [unix]
+    - pkg-config  # [unix]
+    - bison       # [linux]
+    - flex        # [linux]
+    - gperf       # [linux]
+    - jom         # [win]
+    - m2-bison    # [win]
+    - m2-flex     # [win]
+    - m2-gperf    # [win]
+    - m2-patch    # [win]
+    - cmake
+    - ninja
+    - perl
+
+  host:
+    - fontconfig             # [linux]
+    - krb5 1.20.1            # [linux]
+    - libcups 2.4.2          # [linux]
+    - libxkbcommon 1.0.1     # [linux]
+    - libxcb 1.15            # [linux]
+    - xcb-util-cursor 0.1.4  # [linux]
+    - dbus                   # [unix]
+    - mysql 8.4.0            # [unix]
+    - freetype
+    - icu
+    - jpeg
+    - libglib 2.78.4
+    - libpng
+    - openssl
+    - pcre2 10.42
+    - postgresql 12.15
+    - sqlite
+    - zlib
+    - zstd
+  run:
+    - libcups 2.*  # [linux]
+    - mysql 8.4.*  # [unix]
+    - openssl
+    - sqlite
+  run_constrained:
+    - __osx >={{ MACOSX_DEPLOYMENT_TARGET|default("10.14") }}  # [osx and x86_64]
+    - qt >={{ version }},<7
+
+test:
+  requires:
+    - {{ compiler('cxx') }}
+    - cmake
+    - ninja
+  files:
+    - run_qt_test.sh
+    - test/main.cpp
+    - test/test_qmimedatabase.cpp
+    - test/CMakeLists.txt
+  commands:
+    - ./run_qt_test.sh  # [unix]
+    {% for each_qt_lib in ["Core", "Gui", "Network", "OpenGL", "OpenGLWidgets", "PrintSupport", "Sql", "Test", "Widgets", "Xml"] %}
+    - test -d $PREFIX/include/qt6/Qt{{ each_qt_lib }}                           # [unix]
+    - test -f $PREFIX/lib/libQt6{{ each_qt_lib }}${SHLIB_EXT}                   # [unix]
+    - if not exist %PREFIX%\\Library\\include\\qt6\\Qt{{ each_qt_lib }} exit 1  # [win]
+    - if not exist %PREFIX%\\Library\\lib\\Qt6{{ each_qt_lib }}.lib exit 1      # [win]
+    - if not exist %PREFIX%\\Library\\bin\\Qt6{{ each_qt_lib }}.dll exit 1      # [win]
+    {% endfor %}
+    - test -f $PREFIX/lib/qt6/plugins/platforms/libqxcb.so                 # [linux]
+    - test -f $PREFIX/lib/qt6/plugins/platforms/libqeglfs.so               # [linux]
+    - test -f $PREFIX/lib/qt6/plugins/sqldrivers/libqsqlite${SHLIB_EXT}    # [unix]
+    - test -f $PREFIX/lib/qt6/plugins/sqldrivers/libqsqlmysql${SHLIB_EXT}  # [unix]
+    - test -f $PREFIX/lib/qt6/plugins/sqldrivers/libqsqlpsql${SHLIB_EXT}   # [unix]
+    - test -f $PREFIX/lib/qt6/plugins/imageformats/libqjpeg${SHLIB_EXT}    # [unix]
+    - test ! -f $PREFIX/lib/libQt6WaylandClient${SHLIB_EXT}                # [unix]
+    - test ! -f $PREFIX/lib/libQt6WaylandCompositor${SHLIB_EXT}            # [unix]
+    - qmake6 --version
+
+about:
+  home: https://www.qt.io/
+  license: LGPL-3.0-only
+  license_file: {{ name }}/LICENSES/LGPL-3.0-only.txt
+  license_family: LGPL
+  summary: Cross-platform application and UI framework (base libraries).
+  description: |
+    Qt helps you create connected devices, UIs & applications that run
+    anywhere on any device, on any operating system at any time (base libraries).
+  doc_url: https://doc.qt.io/
+  dev_url: https://github.com/qt/qtbase

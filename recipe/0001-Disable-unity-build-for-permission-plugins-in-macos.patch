@@ -1,0 +1,70 @@
+From 475344bfd9b92d2bc45291a3f8c8dfb3d0e88470 Mon Sep 17 00:00:00 2001
+From: Rafael Martins <rmartins@anaconda.com>
+Date: Thu, 20 Jun 2024 00:52:32 +0200
+Subject: [PATCH] Disable unity build for permission plugins in macos
+
+---
+ src/corelib/CMakeLists.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/src/corelib/CMakeLists.txt b/src/corelib/CMakeLists.txt
+index bbe8ba8489..11f49d506d 100644
+--- a/src/corelib/CMakeLists.txt
++++ b/src/corelib/CMakeLists.txt
+@@ -1208,6 +1208,7 @@ if(QT_FEATURE_permissions AND APPLE)
+             platform/darwin/qdarwinpermissionplugin.mm
+         PLUGIN_TYPES
+             permissions
++        NO_UNITY_BUILD
+     )
+ 
+     foreach(permission Camera Microphone Bluetooth Contacts Calendar Location)
+@@ -1217,6 +1218,7 @@ if(QT_FEATURE_permissions AND APPLE)
+     # Camera
+     qt_internal_extend_target(QDarwinCameraPermissionPlugin
+         LIBRARIES ${FWAVFoundation}
++        NO_UNITY_BUILD
+     )
+     set_property(TARGET QDarwinCameraPermissionPlugin PROPERTY
+         _qt_darwin_permissison_separate_request TRUE
+@@ -1225,6 +1227,7 @@ if(QT_FEATURE_permissions AND APPLE)
+     # Microphone
+     qt_internal_extend_target(QDarwinMicrophonePermissionPlugin
+         LIBRARIES ${FWAVFoundation}
++        NO_UNITY_BUILD
+     )
+     set_property(TARGET QDarwinMicrophonePermissionPlugin PROPERTY
+         _qt_darwin_permissison_separate_request TRUE
+@@ -1233,6 +1236,7 @@ if(QT_FEATURE_permissions AND APPLE)
+     # Bluetooth
+     qt_internal_extend_target(QDarwinBluetoothPermissionPlugin
+         LIBRARIES ${FWCoreBluetooth}
++        NO_UNITY_BUILD
+     )
+     set_property(TARGET QDarwinBluetoothPermissionPlugin PROPERTY
+         _qt_info_plist_usage_descriptions "NSBluetoothAlwaysUsageDescription"
+@@ -1241,11 +1245,13 @@ if(QT_FEATURE_permissions AND APPLE)
+     # Contacts
+     qt_internal_extend_target(QDarwinContactsPermissionPlugin
+         LIBRARIES ${FWContacts}
++        NO_UNITY_BUILD
+     )
+ 
+     # Calendar
+     qt_internal_extend_target(QDarwinCalendarPermissionPlugin
+         LIBRARIES ${FWEventKit}
++        NO_UNITY_BUILD
+     )
+     set_property(TARGET QDarwinCalendarPermissionPlugin PROPERTY
+         _qt_info_plist_usage_descriptions "NSCalendarsUsageDescription"
+@@ -1254,6 +1260,7 @@ if(QT_FEATURE_permissions AND APPLE)
+     # Location
+     qt_internal_extend_target(QDarwinLocationPermissionPlugin
+         LIBRARIES ${FWCoreLocation}
++        NO_UNITY_BUILD
+     )
+     if(MACOS)
+         set_property(TARGET QDarwinLocationPermissionPlugin PROPERTY
+-- 
+2.39.2 (Apple Git-143)
+

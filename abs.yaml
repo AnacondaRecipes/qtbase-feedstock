@@ -1,0 +1,3 @@
+aggregate_check: false
+channels:
+  - https://staging.continuum.io/prefect/fs/xcb-util-cursor-feedstock/pr1/8fafa0b
