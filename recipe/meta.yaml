@@ -11,6 +11,7 @@ source:
     folder: {{ name }}
     patches:
       - 0001-Disable-unity-build-for-permission-plugins-in-macos.patch
+      - 0002-avoid-using-macos-12-resource.patch
 
 build:
   number: 0
