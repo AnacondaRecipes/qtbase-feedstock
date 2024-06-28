@@ -25,8 +25,8 @@ cmake -S"%SRC_DIR%/%PKG_NAME%" -Bbuild -GNinja ^
     -DINSTALL_MKSPECSDIR=lib/qt6/mkspecs ^
     -DINSTALL_EXAMPLESDIR=share/doc/qt6/examples ^
     -DINSTALL_DATADIR=share/qt6 ^
-    -DFEATURE_openssl=ON ^
-    -DFEATURE_openssl_linked=ON ^
+    -DQT_FEATURE_openssl=ON ^
+    -DQT_FEATURE_openssl_linked=ON ^
     -DQT_FEATURE_openssl=ON ^
     -DQT_FEATURE_openssl_linked=ON ^
     -DQT_FEATURE_zstd=ON ^
@@ -51,8 +51,7 @@ cmake -S"%SRC_DIR%/%PKG_NAME%" -Bbuild -GNinja ^
     -DQT_FEATURE_system_sqlite=ON ^
     -DQT_FEATURE_system_zlib=ON ^
     -DQT_FEATURE_enable_new_dtags=OFF ^
-    -DFEATURE_quick3d_assimp=OFF ^
-    -DFEATURE_vulkan=ON ^
+    -DQT_FEATURE_quick3d_assimp=OFF ^
     -DQT_MEDIA_BACKEND=ffmpeg ^
     -DINPUT_opengl=%OPENGLVER%
 if errorlevel 1 exit 1
