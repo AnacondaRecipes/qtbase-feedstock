@@ -10,7 +10,7 @@ set OPENGLVER=dynamic
 :: have to set path for internal tools: https://bugreports.qt.io/browse/QTBUG-107009
 set "PATH=%SRC_DIR%\build\qtbase\lib\qt6\bin;%PATH%"
 
-cmake -S"${SRC_DIR}/${PKG_NAME}" -Bbuild -GNinja ^
+cmake -S"%SRC_DIR%/%PKG_NAME%" -Bbuild -GNinja ^
     -DCMAKE_BUILD_TYPE=Release ^
     -DCMAKE_PREFIX_PATH="%LIBRARY_PREFIX%" ^
     -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" ^
