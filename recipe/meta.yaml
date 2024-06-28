@@ -14,7 +14,7 @@ source:
 
 build:
   number: 0
-  skip: True  # [win or (osx and x86_64) or s390x]
+  skip: True  # [not (osx and x86_64)]
   run_exports:
     - {{ pin_subpackage('qtbase', max_pin='x.x') }}
   ignore_run_exports:
