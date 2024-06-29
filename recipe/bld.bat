@@ -26,9 +26,7 @@ cmake -LAH -G "Ninja" ^
     -DINSTALL_EXAMPLESDIR=share/doc/qt6/examples ^
     -DINSTALL_DATADIR=share/qt6 ^
     -DFEATURE_openssl_linked=ON ^
-    -DFEATURE_system_freetype=ON ^
     -DFEATURE_system_sqlite=ON ^
-    -DFEATURE_vulkan=ON ^
     -DINPUT_opengl=%OPENGLVER% ^
     -DQT_BUILD_SUBMODULES="%MODS%" ^
     -B build -S"%SRC_DIR%/%PKG_NAME%"
