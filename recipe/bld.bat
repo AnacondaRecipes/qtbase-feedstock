@@ -31,7 +31,7 @@ cmake -LAH -G "Ninja" ^
     -DFEATURE_vulkan=ON ^
     -DINPUT_opengl=%OPENGLVER% ^
     -DQT_BUILD_SUBMODULES="%MODS%" ^
-    -B build .
+    -B build -S"%SRC_DIR%/%PKG_NAME%"
 if errorlevel 1 exit 1
 
 @REM cmake -S"%SRC_DIR%/%PKG_NAME%" -Bbuild -GNinja ^
