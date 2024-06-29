@@ -84,7 +84,7 @@ requirements:
     - xcb-util-cursor 0.1.4  # [linux]
     - dbus                   # [unix]
     - mysql 8.4.0            # [unix]
-    - freetype
+    - freetype               # [unix]
     - icu
     - jpeg
     - libglib 2.78.4

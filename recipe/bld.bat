@@ -27,9 +27,6 @@ cmake -S"%SRC_DIR%/%PKG_NAME%" -Bbuild -GNinja ^
     -DINSTALL_DATADIR=share/qt6 ^
     -DQT_FEATURE_openssl=ON ^
     -DQT_FEATURE_openssl_linked=ON ^
-    -DQT_FEATURE_zstd=ON ^
-    -DQT_FEATURE_icu=ON ^
-    -DQT_FEATURE_concurrent=ON ^
     -DQT_FEATURE_gui=ON ^
     -DQT_FEATURE_sql=ON ^
     -DQT_FEATURE_testlib=ON ^
@@ -39,17 +36,10 @@ cmake -S"%SRC_DIR%/%PKG_NAME%" -Bbuild -GNinja ^
     -DQT_FEATURE_system_sqlite=ON ^
     -DQT_FEATURE_sql_mysql=OFF ^
     -DQT_FEATURE_sql_psql=ON ^
-    -DQT_FEATURE_mtdev=OFF ^
     -DQT_FEATURE_harfbuzz=OFF ^
-    -DQT_FEATURE_system_harfbuzz=OFF ^
-    -DQT_FEATURE_system_jpeg=ON ^
-    -DQT_FEATURE_system_pcre2=ON ^
-    -DQT_FEATURE_system_png=ON ^
     -DQT_FEATURE_system_sqlite=ON ^
     -DQT_FEATURE_system_zlib=ON ^
     -DQT_FEATURE_enable_new_dtags=OFF ^
-    -DQT_FEATURE_quick3d_assimp=OFF ^
-    -DQT_MEDIA_BACKEND=ffmpeg ^
     -DINPUT_opengl=%OPENGLVER%
 if errorlevel 1 exit 1
 
