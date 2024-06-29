@@ -91,9 +91,8 @@ requirements:
     - mysql 8.4.0            # [unix]
     - freetype               # [unix]
     - pcre2 10.42            # [unix]
-    - icu
-    - jpeg
-    - libglib 2.78.4
+    - libglib 2.78.4         # [unix]
+    - jpeg                   # [unix]
     - libpng
     - openssl
     - postgresql 12.15
@@ -115,7 +114,8 @@ test:
     - cmake
     - ninja
   files:
-    - run_qt_test.sh
+    - run_qt_test.sh    # [unix]
+    - run_qt_test.bat   # [win]
     - test/main.cpp
     - test/test_qmimedatabase.cpp
     - test/CMakeLists.txt
