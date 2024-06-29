@@ -39,7 +39,6 @@ cmake -S"%SRC_DIR%/%PKG_NAME%" -B"%SRC_DIR%\build" -GNinja ^
     -DQT_FEATURE_sql_psql=ON ^
     -DQT_FEATURE_harfbuzz=OFF ^
     -DQT_FEATURE_system_freetype=ON ^
-    -DQT_FEATURE_system_pcre2=ON ^
     -DQT_FEATURE_enable_new_dtags=OFF ^
     -DINPUT_opengl=%OPENGLVER%
 if errorlevel 1 exit 1
