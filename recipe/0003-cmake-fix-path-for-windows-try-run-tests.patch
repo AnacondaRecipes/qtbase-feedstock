@@ -1,25 +1,27 @@
-From 392efafeb157a299884f7f03b660f371f6f12c38 Mon Sep 17 00:00:00 2001
+From 5aafc0cd976a7528dea80d61ac4c01eb65adfce6 Mon Sep 17 00:00:00 2001
 From: Rafael Martins <rmartins@anaconda.com>
 Date: Sat, 29 Jun 2024 06:16:25 +0200
 Subject: [PATCH 3/3] cmake: fix path for windows try run tests
 
 ---
- cmake/QtToolHelpers.cmake | 2 ++
- 1 file changed, 2 insertions(+)
+ cmake/QtToolHelpers.cmake | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/cmake/QtToolHelpers.cmake b/cmake/QtToolHelpers.cmake
-index 7674e7487d..d1f08b7e75 100644
+index 7674e7487d..4ebc0afd20 100644
 --- a/cmake/QtToolHelpers.cmake
 +++ b/cmake/QtToolHelpers.cmake
-@@ -258,6 +258,8 @@ function(_qt_internal_add_try_run_post_build target try_run_flags)
-     qt_configure_file(OUTPUT "${try_run_scripts_path}"
-         CONTENT "@echo off
- 
-+set "PATH=$ENV{SRC_DIR}\build\qtbase\lib\qt6\bin;$ENV{PREFIX}\Library\bin;$ENV{PATH}"
-+
- ${target_out_dir}/${target}.exe ${try_run_flags} > nul 2>&1
- 
- if \"%errorlevel%\" == \"-1073741515\" (
+@@ -278,7 +278,9 @@ echo. > ${target_bin_dir}/${target}_try_run_passed"
+         DEPENDS
+             ${target}
+         COMMAND
+-            ${CMAKE_COMMAND} -E env QT_COMMAND_LINE_PARSER_NO_GUI_MESSAGE_BOXES=1
++            ${CMAKE_COMMAND} -E env
++                QT_COMMAND_LINE_PARSER_NO_GUI_MESSAGE_BOXES=1
++                PATH=$ENV{SRC_DIR}\\build\\qtbase\\lib\\qt6\\bin;$ENV{PREFIX}\\Library\\bin;$ENV{PATH}
+             ${try_run_scripts_path}
+         COMMENT
+             "Testing ${target} by trying to run it."
 -- 
 2.39.2 (Apple Git-143)
 
