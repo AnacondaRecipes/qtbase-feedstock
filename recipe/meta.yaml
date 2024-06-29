@@ -25,6 +25,10 @@ build:
     - {{ pin_subpackage('qtbase', max_pin='x.x') }}
   ignore_run_exports:
     - dbus    # [unix]
+  missing_dso_whitelist:
+    - '*/api-ms-win-shcore-scaling-l1-1-1.dll'     # [win]
+    - '*/api-ms-win-core-winrt-l1-1-0.dll'         # [win]
+    - '*/api-ms-win-core-winrt-string-l1-1-0.dll'  # [win]
 
 requirements:
   build:
@@ -85,13 +89,13 @@ requirements:
     - xcb-util-cursor 0.1.4  # [linux]
     - dbus                   # [unix]
     - mysql 8.4.0            # [unix]
-    - freetype
+    - freetype               # [unix]
     - icu
-    - jpeg
-    - libglib 2.78.4
+    - jpeg                   # [unix]
+    - libglib 2.78.4         # [unix]
     - libpng
     - openssl
-    - pcre2 10.42
+    - pcre2 10.42            # [unix]
     - postgresql 12.15
     - sqlite
     - zlib
