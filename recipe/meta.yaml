@@ -12,7 +12,7 @@ source:
     patches:
       - 0001-Disable-unity-build-for-permission-plugins-in-macos.patch
       - 0002-avoid-using-macos-12-resource.patch
-      - 0003-do-not-link-rcc-to-zstd-on-windows.patch
+      #- 0003-do-not-link-rcc-to-zstd-on-windows.patch
 
   - url: https://download.qt.io/development_releases/prebuilt/llvmpipe/windows/opengl32sw-64-mesa_12_0_rc2.7z  # [win]
     sha256: 2a0d2f92c60e0962ef5f6039d3793424c6f39e49ba27ac04a5b21ca4ae012e15                                   # [win]
@@ -95,7 +95,7 @@ requirements:
     - postgresql 12.15
     - sqlite
     - zlib
-    - zstd
+    - zstd                   # [unix]
   run:
     - libcups 2.*  # [linux]
     - mysql 8.4.*  # [unix]
