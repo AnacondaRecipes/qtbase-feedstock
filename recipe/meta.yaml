@@ -85,7 +85,7 @@ requirements:
     - xcb-util-cursor 0.1.4  # [linux]
     - dbus                   # [unix]
     - mysql 8.4.0            # [unix]
-    - freetype               # [unix]
+    - freetype
     - icu
     - jpeg
     - libglib 2.78.4
@@ -95,7 +95,7 @@ requirements:
     - postgresql 12.15
     - sqlite
     - zlib
-    - zstd                   # [unix]
+    - zstd
   run:
     - libcups 2.*  # [linux]
     - mysql 8.4.*  # [unix]

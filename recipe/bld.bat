@@ -8,13 +8,13 @@ if not exist %LIBRARY_BIN%\opengl32sw.dll exit /b 1
 set OPENGLVER=dynamic
 
 :: have to set path for internal tools: https://bugreports.qt.io/browse/QTBUG-107009
-set "PATH=%SRC_DIR%\build\qtbase\lib\qt6\bin;%PATH%"
+set "PATH=%SRC_DIR%\build\lib\qt6\bin;%PATH%"
 
 cmake -S"%SRC_DIR%/%PKG_NAME%" -B"%SRC_DIR%\build" -GNinja ^
     -DCMAKE_BUILD_TYPE=Release ^
     -DCMAKE_PREFIX_PATH="%LIBRARY_PREFIX%" ^
     -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" ^
-    -DCMAKE_UNITY_BUILD=ON ^
+    -DQT_UNITY_BUILD=ON ^
     -DINSTALL_BINDIR=lib/qt6/bin ^
     -DINSTALL_PUBLICBINDIR=bin ^
     -DINSTALL_LIBEXECDIR=lib/qt6 ^
@@ -38,7 +38,8 @@ cmake -S"%SRC_DIR%/%PKG_NAME%" -B"%SRC_DIR%\build" -GNinja ^
     -DQT_FEATURE_sql_mysql=OFF ^
     -DQT_FEATURE_sql_psql=ON ^
     -DQT_FEATURE_harfbuzz=OFF ^
-    -DQT_FEATURE_zstd=OFF ^
+    -DQT_FEATURE_system_freetype=ON ^
+    -DQT_FEATURE_system_pcre2=ON ^
     -DQT_FEATURE_enable_new_dtags=OFF ^
     -DINPUT_opengl=%OPENGLVER%
 if errorlevel 1 exit 1
