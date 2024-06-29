@@ -39,7 +39,7 @@ cmake -S"%SRC_DIR%/%PKG_NAME%" -Bbuild -GNinja ^
     -DQT_FEATURE_widgets=ON ^
     -DQT_FEATURE_sql_sqlite=ON ^
     -DQT_FEATURE_system_sqlite=ON ^
-    -DQT_FEATURE_sql_mysql=ON ^
+    -DQT_FEATURE_sql_mysql=OFF ^
     -DQT_FEATURE_sql_psql=ON ^
     -DQT_FEATURE_mtdev=OFF ^
     -DQT_FEATURE_harfbuzz=OFF ^
