@@ -93,6 +93,7 @@ requirements:
     - pcre2 10.42            # [unix]
     - libglib 2.78.4         # [unix]
     - jpeg                   # [unix]
+    - icu
     - libpng
     - openssl
     - postgresql 12.15
