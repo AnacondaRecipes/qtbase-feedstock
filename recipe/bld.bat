@@ -8,13 +8,13 @@ if not exist %LIBRARY_BIN%\opengl32sw.dll exit /b 1
 set OPENGLVER=dynamic
 
 :: have to set path for internal tools: https://bugreports.qt.io/browse/QTBUG-107009
-set "PATH=%SRC_DIR%\build\qtbase\lib\qt6\bin;%PATH%"
+set "PATH=%SRC_DIR%\build\qtbase\lib\qt6\bin;%BUILD_PREFIX%\Library\bin;%PATH%"
 
-cmake -LAH -G "Ninja" ^
+cmake -S"%SRC_DIR%/%PKG_NAME%" -Bbuild -GNinja ^
     -DCMAKE_BUILD_TYPE=Release ^
     -DCMAKE_PREFIX_PATH="%LIBRARY_PREFIX%" ^
     -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" ^
-    -DCMAKE_UNITY_BUILD=ON -DCMAKE_UNITY_BUILD_BATCH_SIZE=32 ^
+    -DCMAKE_UNITY_BUILD=ON ^
     -DINSTALL_BINDIR=lib/qt6/bin ^
     -DINSTALL_PUBLICBINDIR=bin ^
     -DINSTALL_LIBEXECDIR=lib/qt6 ^
@@ -25,44 +25,22 @@ cmake -LAH -G "Ninja" ^
     -DINSTALL_MKSPECSDIR=lib/qt6/mkspecs ^
     -DINSTALL_EXAMPLESDIR=share/doc/qt6/examples ^
     -DINSTALL_DATADIR=share/qt6 ^
-    -DFEATURE_openssl_linked=ON ^
-    -DFEATURE_system_sqlite=ON ^
-    -DINPUT_opengl=%OPENGLVER% ^
-    -DQT_BUILD_SUBMODULES="%MODS%" ^
-    -B build -S"%SRC_DIR%/%PKG_NAME%"
+    -DQT_FEATURE_openssl=ON ^
+    -DQT_FEATURE_openssl_linked=ON ^
+    -DQT_FEATURE_gui=ON ^
+    -DQT_FEATURE_sql=ON ^
+    -DQT_FEATURE_testlib=ON ^
+    -DQT_FEATURE_xml=ON ^
+    -DQT_FEATURE_icu=ON ^
+    -DQT_FEATURE_widgets=ON ^
+    -DQT_FEATURE_sql_sqlite=ON ^
+    -DQT_FEATURE_system_sqlite=OFF ^
+    -DQT_FEATURE_sql_mysql=OFF ^
+    -DQT_FEATURE_sql_psql=ON ^
+    -DQT_FEATURE_harfbuzz=OFF ^
+    -DQT_FEATURE_enable_new_dtags=OFF ^
+    -DINPUT_opengl=%OPENGLVER%
 if errorlevel 1 exit 1
-
-@REM cmake -S"%SRC_DIR%/%PKG_NAME%" -Bbuild -GNinja ^
-@REM     -DCMAKE_BUILD_TYPE=Release ^
-@REM     -DCMAKE_PREFIX_PATH="%LIBRARY_PREFIX%" ^
-@REM     -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" ^
-@REM     -DCMAKE_UNITY_BUILD=ON ^
-@REM     -DINSTALL_BINDIR=lib/qt6/bin ^
-@REM     -DINSTALL_PUBLICBINDIR=bin ^
-@REM     -DINSTALL_LIBEXECDIR=lib/qt6 ^
-@REM     -DINSTALL_DOCDIR=share/doc/qt6 ^
-@REM     -DINSTALL_ARCHDATADIR=lib/qt6 ^
-@REM     -DINSTALL_DATADIR=share/qt6 ^
-@REM     -DINSTALL_INCLUDEDIR=include/qt6 ^
-@REM     -DINSTALL_MKSPECSDIR=lib/qt6/mkspecs ^
-@REM     -DINSTALL_EXAMPLESDIR=share/doc/qt6/examples ^
-@REM     -DINSTALL_DATADIR=share/qt6 ^
-@REM     -DQT_FEATURE_openssl=ON ^
-@REM     -DQT_FEATURE_openssl_linked=ON ^
-@REM     -DQT_FEATURE_gui=ON ^
-@REM     -DQT_FEATURE_sql=ON ^
-@REM     -DQT_FEATURE_testlib=ON ^
-@REM     -DQT_FEATURE_xml=ON ^
-@REM     -DQT_FEATURE_icu=ON ^
-@REM     -DQT_FEATURE_widgets=ON ^
-@REM     -DQT_FEATURE_sql_sqlite=ON ^
-@REM     -DQT_FEATURE_system_sqlite=OFF ^
-@REM     -DQT_FEATURE_sql_mysql=OFF ^
-@REM     -DQT_FEATURE_sql_psql=ON ^
-@REM     -DQT_FEATURE_harfbuzz=OFF ^
-@REM     -DQT_FEATURE_enable_new_dtags=OFF ^
-@REM     -DINPUT_opengl=%OPENGLVER%
-@REM if errorlevel 1 exit 1
 
 cmake --build build --target install
 if errorlevel 1 exit 1
