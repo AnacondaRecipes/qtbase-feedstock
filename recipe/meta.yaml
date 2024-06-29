@@ -90,12 +90,12 @@ requirements:
     - dbus                   # [unix]
     - mysql 8.4.0            # [unix]
     - freetype               # [unix]
+    - pcre2 10.42            # [unix]
     - icu
-    - jpeg                   # [unix]
-    - libglib 2.78.4         # [unix]
+    - jpeg
+    - libglib 2.78.4
     - libpng
     - openssl
-    - pcre2 10.42            # [unix]
     - postgresql 12.15
     - sqlite
     - zlib
