@@ -40,7 +40,7 @@ cmake -S"%SRC_DIR%/%PKG_NAME%" -B"%SRC_DIR%\build" -GNinja ^
     -DQT_FEATURE_sql_psql=ON ^
     -DQT_FEATURE_harfbuzz=OFF ^
     -DQT_FEATURE_jpeg=ON ^
-    -DQT_FEATURE_system_jpeg=OFF ^
+    -DQT_FEATURE_system_jpeg=ON ^
     -DQT_FEATURE_system_png=ON ^
     -DQT_FEATURE_enable_new_dtags=OFF ^
     -DINPUT_opengl=%OPENGLVER%

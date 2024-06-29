@@ -1,7 +1,7 @@
 From 4f04e865ab0e370890a3b2c3c3d5254607abd3a9 Mon Sep 17 00:00:00 2001
 From: Rafael Martins <rmartins@anaconda.com>
 Date: Fri, 28 Jun 2024 23:18:43 +0200
-Subject: [PATCH 2/3] avoid using macos 12 resource
+Subject: [PATCH 2/2] avoid using macos 12 resource
 
 ---
  src/plugins/platforms/cocoa/qcocoaapplicationdelegate.mm | 4 ++--
