@@ -27,8 +27,6 @@ cmake -S"%SRC_DIR%/%PKG_NAME%" -Bbuild -GNinja ^
     -DINSTALL_DATADIR=share/qt6 ^
     -DQT_FEATURE_openssl=ON ^
     -DQT_FEATURE_openssl_linked=ON ^
-    -DQT_FEATURE_openssl=ON ^
-    -DQT_FEATURE_openssl_linked=ON ^
     -DQT_FEATURE_zstd=ON ^
     -DQT_FEATURE_icu=ON ^
     -DQT_FEATURE_concurrent=ON ^
@@ -44,7 +42,6 @@ cmake -S"%SRC_DIR%/%PKG_NAME%" -Bbuild -GNinja ^
     -DQT_FEATURE_mtdev=OFF ^
     -DQT_FEATURE_harfbuzz=OFF ^
     -DQT_FEATURE_system_harfbuzz=OFF ^
-    -DQT_FEATURE_system_freetype=ON ^
     -DQT_FEATURE_system_jpeg=ON ^
     -DQT_FEATURE_system_pcre2=ON ^
     -DQT_FEATURE_system_png=ON ^
