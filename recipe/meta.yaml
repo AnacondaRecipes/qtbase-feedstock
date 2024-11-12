@@ -18,7 +18,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 0
+  number: 1
   skip: True  # [ppc64le or s390x]
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
@@ -81,7 +81,7 @@ requirements:
     - icu
     - libpng
     - openssl
-    - postgresql 12.15
+    - postgresql 17.0
     - sqlite
     - zlib
     - zstd
@@ -93,6 +93,7 @@ requirements:
   run_constrained:
     - qt-main >={{ version }},<7
     - qt >={{ version }},<7
+    - {{ pin_compatible('postgresql', max_pin='x.x.x') }}
 
 test:
   requires:
