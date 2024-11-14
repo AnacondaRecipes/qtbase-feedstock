@@ -81,19 +81,19 @@ requirements:
     - icu
     - libpng
     - openssl
-    - postgresql 17.0
+    - libpq 17.0
     - sqlite
     - zlib
     - zstd
   run:
     - libcups 2.*  # [linux]
     - mysql 8.4.*  # [unix]
+    - libpq
     - openssl
     - sqlite
   run_constrained:
     - qt-main >={{ version }},<7
     - qt >={{ version }},<7
-    - {{ pin_compatible('postgresql', max_pin='x.x.x') }}
 
 test:
   requires:

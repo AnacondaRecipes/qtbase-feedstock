@@ -6,6 +6,5 @@ aggregate_check: false
 
 channels:
   - rafaelmartins-qt
-  - https://staging.continuum.io/prefect/fs/postgresql-feedstock/pr10/c21a76d
 
 upload_without_merge: true
