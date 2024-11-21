@@ -18,7 +18,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 0
+  number: 1
   skip: True  # [ppc64le or s390x]
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
@@ -63,8 +63,6 @@ requirements:
     - cmake
     - ninja
     - perl
-    # linked statically on windows
-    - jpeg  # [win]
   host:
     - fontconfig             # [linux]
     - krb5 1.20.1            # [linux]
@@ -77,17 +75,18 @@ requirements:
     - freetype               # [unix]
     - pcre2 10.42            # [unix]
     - libglib 2.78.4         # [unix]
-    - jpeg                   # [unix]
+    - jpeg
     - icu
     - libpng
     - openssl
-    - postgresql 12.15
+    - libpq 17.0
     - sqlite
     - zlib
     - zstd
   run:
     - libcups 2.*  # [linux]
     - mysql 8.4.*  # [unix]
+    - libpq
     - openssl
     - sqlite
   run_constrained:
