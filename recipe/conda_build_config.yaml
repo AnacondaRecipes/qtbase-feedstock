@@ -6,6 +6,3 @@ c_compiler:
   - vs2019  # [win]
 cxx_compiler:
   - vs2019  # [win]
-macos_machine:
-  - x86_64-apple-darwin20.0.0  # [osx and x86_64]
-  - arm64-apple-darwin20.0.0   # [osx and arm64]
