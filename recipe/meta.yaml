@@ -18,9 +18,8 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 1
+  number: 2
   skip: True  # [ppc64le or s390x]
-  skip: True  # [osx and x86_64]
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
   ignore_run_exports:
