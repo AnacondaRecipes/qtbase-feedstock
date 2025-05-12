@@ -6,7 +6,7 @@ package:
   version: {{ version }}
 
 source:
-  - url: https://download.qt.io/official_releases/qt/{{ version.rpartition('.')[0] }}/{{ version }}/submodules/{{ name }}-everywhere-src-{{ version }}.tar.xz
+  - url: https://download.qt.io/archive/qt/{{ version.rpartition('.')[0] }}/{{ version }}/submodules/{{ name }}-everywhere-src-{{ version }}.tar.xz
     sha256: 8ccbb9ab055205ac76632c9eeddd1ed6fc66936fc56afc2ed0fd5d9e23da3097
     folder: {{ name }}
     patches:
@@ -18,7 +18,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 0
+  number: 1
   skip: True  # [ppc64le or s390x]
   skip: True  # [osx and x86_64]
   run_exports:
@@ -34,23 +34,6 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - {{ cdt('libdrm-devel') }}               # [linux]
-    - {{ cdt('libglvnd-glx') }}               # [linux and not x86_64]
-    - {{ cdt('libglvnd-egl') }}               # [linux and not x86_64]
-    - {{ cdt('libice-devel') }}               # [linux]
-    - {{ cdt('libsm-devel') }}                # [linux]
-    - {{ cdt('libx11-devel') }}               # [linux]
-    - {{ cdt('libxau-devel') }}               # [linux]
-    - {{ cdt('mesa-libgl-devel') }}           # [linux]
-    - {{ cdt('mesa-libgbm') }}                # [linux]
-    - {{ cdt('mesa-libegl-devel') }}          # [linux]
-    - {{ cdt('mesa-dri-drivers') }}           # [linux]
-    - {{ cdt('xcb-util-devel') }}             # [linux]
-    - {{ cdt('xcb-util-image-devel') }}       # [linux]
-    - {{ cdt('xcb-util-keysyms-devel') }}     # [linux]
-    - {{ cdt('xcb-util-renderutil-devel') }}  # [linux]
-    - {{ cdt('xcb-util-wm-devel') }}          # [linux]
-    - {{ cdt('xorg-x11-proto-devel') }}       # [linux]
     - patch       # [unix]
     - pkg-config  # [unix]
     - bison       # [linux]
@@ -65,26 +48,37 @@ requirements:
     - ninja
     - perl
   host:
-    - fontconfig             # [linux]
-    - krb5 1.20.1            # [linux]
-    - libcups 2.4.2          # [linux]
-    - libxkbcommon 1.0.1     # [linux]
-    - libxcb 1.15            # [linux]
-    - xcb-util-cursor 0.1.4  # [linux]
-    - dbus                   # [unix]
-    - mysql 8.4.0            # [unix]
-    - freetype               # [unix]
-    - pcre2 10.42            # [unix]
-    - libglib 2.78.4         # [unix]
-    - jpeg
-    - icu
-    - libpng
-    - openssl
-    - libpq 17.0
-    - sqlite
-    - zlib
-    - zstd
+    - fontconfig {{ fontconfig }}  # [linux]
+    - krb5 1.20.1                  # [linux]
+    - libcups 2.4.2                # [linux]
+    - dbus {{ dbus }}              # [unix]
+    - mysql 8.4.0                  # [unix]
+    - freetype {{ freetype }}      # [unix]
+    - pcre2 {{ pcre2 }}            # [unix]
+    - libglib {{ libglib }}        # [unix]
+    - jpeg {{ jpeg }}
+    - icu {{ icu }}
+    - libpng {{ libpng }}
+    - openssl {{ openssl }}
+    - libpq {{ libpq }}
+    - sqlite {{ sqlite }}
+    - zlib {{ zlib }}
+    - zstd {{ zstd }}
+    # OpenGL support
+    - libxkbcommon {{ libxkbcommon }}                # [linux]
+    - libxcb {{ libxcb }}                            # [linux]
+    - libgl-devel  {{ libgl }}                       # [linux]
+    - libegl-devel {{ libglvnd }}                    # [linux]
+    - xcb-util-cursor {{ xcb_util_cursor }}          # [linux]
+    - xcb-util-image {{ xcb_util_image }}            # [linux]
+    - xcb-util-keysyms {{ xcb_util_keysyms }}        # [linux]
+    - xcb-util-renderutil {{ xcb_util_renderutil }}  # [linux]
+    - xcb-util-wm {{ xcb_util_wm }}                  # [linux]
+    - xorg-libice {{ xorg_libice }}                  # [linux]
+    - xorg-libsm {{ xorg_libsm }}                    # [linux]
+    - xorg-libx11 {{ xorg_libx11 }}                  # [linux]
   run:
+    - mesalib      # [linux]
     - libcups 2.*  # [linux]
     - mysql 8.4.*  # [unix]
     - libpq
@@ -94,26 +88,167 @@ requirements:
     - qt-main >={{ version }},<7
     - qt >={{ version }},<7
 
+# An empty dummy variable has to be declared here or else the real list within the `outputs` block will be scoped only
+# to that block and not usable below in the `qtbase` package tests.
+{% set qt_libs = [] %}
+
+outputs:
+{% set qt_libs = [ "Core",
+                   "Concurrent",
+                   "DBus",
+                   "Gui",
+                   "Network",
+                   "OpenGL",
+                   "OpenGLWidgets",
+                   "PrintSupport",
+                   "Sql",
+                   "Test",
+                   "Widgets",
+                   "Xml"
+] %}
+{% set private_qt_libs = [ "BuildInternals",
+                           "Concurrent",
+                           "CoreTools",
+                           "DBusTools",
+                           "DeviceDiscoverySupportPrivate",
+                           "EglFSDeviceIntegrationPrivate",  # [unix]
+                           "EntryPointPrivate",              # [win]
+                           "ExampleIconsPrivate",
+                           "FbSupportPrivate",
+                           "GuiTools",
+                           "HostInfo",
+                           "InputSupportPrivate",            # [unix]
+                           "KmsSupportPrivate",              # [unix]
+                           "WidgetsTools",
+                           "XcbQpaPrivate"                   # [unix]
+] %}
+{% set win_prefix = "" %}          # [not win]
+{% set win_suffix = "" %}          # [not win]
+{% set win_prefix = "Library/" %}  # [win]
+{% set win_suffix = ".exe" %}      # [win]
+
+  - name: {{ name }}
+    files:
+      - "lib/libQt6*.so.*"                 # [linux]
+      - "lib/libQt6*.6.dylib"              # [osx]
+      - "lib/libQt6*.{{ version }}.dylib"  # [osx]
+      - "Library/bin/Qt6*.dll"             # [win]
+      - "Library/lib/qt6/bin/Qt6*.dll"     # [win]
+      # qt.conf files are overrides used for plugins so should go wherever the plugins go.
+      - qt6.conf                           # [win]
+      - {{ win_prefix }}bin/qt6.conf
+      - {{ win_prefix }}lib/qt6/plugins
+      - {{ win_prefix }}share/doc/qt6
+
+  - name: {{ name }}-devel
+    build:
+      run_exports:
+        - {{ pin_subpackage(name, max_pin='x.x') }}
+    requirements:
+      build:
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+      host:
+        - {{ pin_subpackage(name, exact=True) }}
+        - pcre2 {{ pcre2 }}  # [unix]
+        - zstd {{ zstd }}
+      run:
+        - {{ pin_subpackage(name, exact=True) }}
+        - libgl-devel            # [linux]
+        - libegl-devel           # [linux]
+        - libglx-devel           # [linux]
+    files:
+      - {{ win_prefix }}bin/androiddeployqt6{{ win_suffix }}
+      - {{ win_prefix }}bin/qmake6{{ win_suffix }}
+      - Library/bin/qtpaths6.exe                 # [win]
+      - Library/bin/windeployqt6.exe             # [win]
+      - {{ win_prefix }}include/qt6
+      - "lib/libQt6*.prl"                        # [unix]
+      - "Library/lib/Qt6*.prl"                   # [win]
+      {% for lib_name in qt_libs %}
+      - lib/libQt6{{ lib_name }}{{ SHLIB_EXT }}  # [unix]
+      - Library/lib/Qt6{{ lib_name }}.lib        # [win]
+      {% endfor %}
+      - Library/lib/Qt6EntryPoint.lib            # [win]
+      {% for lib_name in qt_libs + private_qt_libs %}
+      - {{ win_prefix }}lib/cmake/Qt6{{ lib_name }}
+      {% endfor %}
+      - {{ win_prefix }}lib/cmake/Qt6
+      - "lib/pkgconfig/Qt6*.pc"                  # [unix]
+      - {{ win_prefix }}lib/objects-Release/ExampleIconsPrivate_resources_1/.qt
+      - lib/qt6/bin                              # [unix]
+      - "Library/lib/qt6/bin/*.bat"              # [win]
+      - "Library/lib/qt6/bin/*{{ win_suffix }}"  # [win]
+      - lib/qt6/qt-cmake-private                 # [unix]
+      - {{ win_prefix }}lib/qt6/qt-cmake-private-install.cmake
+      - lib/qt6/qt-cmake-standalone-test         # [unix]
+      - lib/qt6/qt-internal-configure-examples   # [unix]
+      - lib/qt6/qt-internal-configure-tests      # [unix]
+      - {{ win_prefix }}lib/qt6/ensure_pro_file.cmake
+      - {{ win_prefix }}lib/qt6/qt-testrunner.py
+      - {{ win_prefix }}lib/qt6/sanitizer-testrunner.py
+      - {{ win_prefix }}lib/qt6/syncqt{{ win_suffix }}
+      - Library/lib/qt6/syncqt.pdb               # [win]
+      - {{ win_prefix }}lib/qt6/moc{{ win_suffix }}
+      - {{ win_prefix }}lib/qt6/rcc{{ win_suffix }}
+      - {{ win_prefix }}lib/qt6/tracepointgen{{ win_suffix }}
+      - {{ win_prefix }}lib/qt6/tracegen{{ win_suffix }}
+      - {{ win_prefix }}lib/qt6/cmake_automoc_parser{{ win_suffix }}
+      - {{ win_prefix }}lib/qt6/uic{{ win_suffix }}
+      - {{ win_prefix }}lib/qt6/qlalr{{ win_suffix }}
+      - {{ win_prefix }}lib/qt6/qvkgen{{ win_suffix }}
+      - {{ win_prefix }}lib/qt6/uic{{ win_suffix }}
+      - {{ win_prefix }}lib/qt6/metatypes
+      - {{ win_prefix }}lib/qt6/mkspecs
+      - {{ win_prefix }}lib/qt6/modules
+    test:
+      requires:
+        - {{ compiler('cxx') }}
+        - cmake
+        - ninja
+        - dbus          # [linux]
+        - pkg-config    # [linux]
+        # These are needed for linking, not runtime
+        - libxkbcommon  # [linux]
+      files:
+        - run_qt_test.sh    # [unix]
+        - run_qt_test.bat   # [win]
+        - test/main.cpp
+        - test/test_qmimedatabase.cpp
+        - test/CMakeLists.txt
+        - test/test_opengl.cpp
+      commands:
+        {% for lib_name in qt_libs %}
+        - test -d $PREFIX/include/qt6/Qt{{ lib_name }}              # [unix]
+        - test -f $PREFIX/lib/libQt6{{ lib_name }}${SHLIB_EXT}      # [unix]
+        - echo Checking for %LIBRARY_INC%\\qt6\\Qt{{ lib_name }}    # [win]
+        - if not exist %LIBRARY_INC%\\qt6\\Qt{{ lib_name }} exit 1  # [win]
+        - echo Checking for %LIBRARY_LIB%\\Qt6{{ lib_name }}.lib    # [win]
+        - if not exist %LIBRARY_LIB%\\Qt6{{ lib_name }}.lib exit 1  # [win]
+        {% endfor %}
+        - test ! -f $PREFIX/lib/libQt6WaylandClient${SHLIB_EXT}      # [unix]
+        - test ! -f $PREFIX/lib/libQt6WaylandCompositor${SHLIB_EXT}  # [unix]
+        # pkg-config checks for OpenGL modules (CLI-only, no GUI required)
+        - export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig       # [linux]
+        - pkg-config --cflags Qt6Core                        # [linux]
+        - pkg-config --cflags Qt6OpenGL                      # [linux]
+        - pkg-config --cflags Qt6OpenGLWidgets               # [linux]
+        - qmake6 --version
+        - ./run_qt_test.sh  # [unix]
+        - run_qt_test.bat   # [win]
+
+# `test` has to come after `outputs` so that the `qt_libs` list works in both. Weird.
 test:
-  requires:
-    - {{ compiler('cxx') }}
-    - cmake
-    - ninja
-  files:
-    - run_qt_test.sh    # [unix]
-    - run_qt_test.bat   # [win]
-    - test/main.cpp
-    - test/test_qmimedatabase.cpp
-    - test/CMakeLists.txt
   commands:
-    - ./run_qt_test.sh  # [unix]
-    - run_qt_test.bat   # [win]
-    {% for each_qt_lib in ["Core", "Gui", "Network", "OpenGL", "OpenGLWidgets", "PrintSupport", "Sql", "Test", "Widgets", "Xml"] %}
-    - test -d $PREFIX/include/qt6/Qt{{ each_qt_lib }}                           # [unix]
-    - test -f $PREFIX/lib/libQt6{{ each_qt_lib }}${SHLIB_EXT}                   # [unix]
-    - if not exist %PREFIX%\\Library\\include\\qt6\\Qt{{ each_qt_lib }} exit 1  # [win]
-    - if not exist %PREFIX%\\Library\\lib\\Qt6{{ each_qt_lib }}.lib exit 1      # [win]
-    - if not exist %PREFIX%\\Library\\bin\\Qt6{{ each_qt_lib }}.dll exit 1      # [win]
+    {% for lib_name in qt_libs %}
+    - test -f $PREFIX/lib/libQt6{{ lib_name }}.so.{{ version }}           # [linux]
+    - test -f $PREFIX/lib/libQt6{{ lib_name }}.so.6                       # [linux]
+    - test -f $PREFIX/lib/libQt6{{ lib_name }}.{{ version }}.dylib        # [osx]
+    - test -f $PREFIX/lib/libQt6{{ lib_name }}.6.dylib                    # [osx]
+    - echo Checking for %LIBRARY_LIB%\\qt6\\bin\\Qt6{{ lib_name }}.dll    # [win]
+    - if not exist %LIBRARY_LIB%\\qt6\\bin\\Qt6{{ lib_name }}.dll exit 1  # [win]
+    - echo Checking for %LIBRARY_BIN%\\Qt6{{ lib_name }}.dll              # [win]
+    - if not exist %LIBRARY_BIN%\\Qt6{{ lib_name }}.dll exit 1            # [win]
     {% endfor %}
     - test -f $PREFIX/lib/qt6/plugins/platforms/libqxcb.so                 # [linux]
     - test -f $PREFIX/lib/qt6/plugins/platforms/libqeglfs.so               # [linux]
@@ -121,9 +256,6 @@ test:
     - test -f $PREFIX/lib/qt6/plugins/sqldrivers/libqsqlmysql${SHLIB_EXT}  # [unix]
     - test -f $PREFIX/lib/qt6/plugins/sqldrivers/libqsqlpsql${SHLIB_EXT}   # [unix]
     - test -f $PREFIX/lib/qt6/plugins/imageformats/libqjpeg${SHLIB_EXT}    # [unix]
-    - test ! -f $PREFIX/lib/libQt6WaylandClient${SHLIB_EXT}                # [unix]
-    - test ! -f $PREFIX/lib/libQt6WaylandCompositor${SHLIB_EXT}            # [unix]
-    - qmake6 --version
 
 about:
   home: https://www.qt.io/
@@ -136,3 +268,10 @@ about:
     anywhere on any device, on any operating system at any time ({{ name[2:] }} libraries).
   doc_url: https://doc.qt.io/
   dev_url: https://github.com/qt/{{ name }}
+
+extra:
+  skip-lints:
+    - outputs_not_unique  # output "qtbase": Output name is not unique.
+    - missing_tests  # output "qtbase": No tests were found.
+    - missing_section  # output "qtbase": The requirements section is missing.
+    - no_global_test  # Global tests are ignored in multi-output recipes. <- No longer true.
