@@ -18,8 +18,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 1
-  skip: True  # [ppc64le or s390x]
+  number: 2
   skip: True  # [osx and x86_64]
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
@@ -32,6 +31,7 @@ build:
 
 requirements:
   build:
+    - {{ stdlib('c') }}
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - patch       # [unix]
@@ -49,10 +49,10 @@ requirements:
     - perl
   host:
     - fontconfig {{ fontconfig }}  # [linux]
-    - krb5 1.20.1                  # [linux]
+    - krb5 {{ krb5 }}              # [linux]
     - libcups 2.4.2                # [linux]
     - dbus {{ dbus }}              # [unix]
-    - mysql 8.4.0                  # [unix]
+    - mysql {{ mysql }}            # [unix]
     - freetype {{ freetype }}      # [unix]
     - pcre2 {{ pcre2 }}            # [unix]
     - libglib {{ libglib }}        # [unix]
@@ -78,12 +78,9 @@ requirements:
     - xorg-libsm {{ xorg_libsm }}                    # [linux]
     - xorg-libx11 {{ xorg_libx11 }}                  # [linux]
   run:
-    - mesalib      # [linux]
-    - libcups 2.*  # [linux]
-    - mysql 8.4.*  # [unix]
-    - libpq
-    - openssl
-    - sqlite
+    - mesalib 25         # [linux]
+    - libcups 2.*        # [linux]
+    - mysql {{ mysql }}  # [unix]
   run_constrained:
     - qt-main >={{ version }},<7
     - qt >={{ version }},<7
@@ -146,6 +143,7 @@ outputs:
         - {{ pin_subpackage(name, max_pin='x.x') }}
     requirements:
       build:
+        - {{ stdlib('c') }}
         - {{ compiler('c') }}
         - {{ compiler('cxx') }}
       host:
