@@ -2,13 +2,18 @@
 
 set -ex
 
+# OpenGL support
 if [[ "${target_platform}" == linux-* ]]; then
   CMAKE_ARGS="
     ${CMAKE_ARGS}
+    -DQT_FEATURE_opengl=ON
     -DQT_FEATURE_egl=ON
     -DQT_FEATURE_eglfs=ON
     -DQT_FEATURE_xcb=ON
+    -DQT_FEATURE_xcb_egl_plugin=ON
+    -DQT_FEATURE_xcb_glx_plugin=ON
     -DQT_FEATURE_xcb_xlib=ON
+    -DQT_FEATURE_xlib=ON
     -DQT_FEATURE_xkbcommon=ON
     -DQT_FEATURE_vulkan=OFF
     -DQT_FEATURE_wayland=OFF
@@ -56,12 +61,13 @@ cmake -S"${SRC_DIR}/${PKG_NAME}" -Bbuild -GNinja ${CMAKE_ARGS} \
   -DQT_FEATURE_system_pcre2=ON \
   -DQT_FEATURE_system_png=ON \
   -DQT_FEATURE_system_sqlite=ON \
+  -DQT_FEATURE_system_xcb_xinput=ON \
   -DQT_FEATURE_system_zlib=ON \
   -DQT_FEATURE_cups=ON \
   -DQT_FEATURE_framework=OFF \
   -DQT_FEATURE_gssapi=ON \
   -DQT_FEATURE_enable_new_dtags=OFF
-cmake --build build --target install
+cmake --build build --target install --parallel ${CPU_COUNT}
 
 pushd "${PREFIX}"
 
