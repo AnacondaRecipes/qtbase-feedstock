@@ -1,29 +1,31 @@
 {% set name = "qtbase" %}
-{% set version = "6.7.3" %}
+{% set version = "6.9.1" %}
 
 package:
   name: {{ name }}
   version: {{ version }}
 
 source:
-  - url: https://download.qt.io/archive/qt/{{ version.rpartition('.')[0] }}/{{ version }}/submodules/{{ name }}-everywhere-src-{{ version }}.tar.xz
-    sha256: 8ccbb9ab055205ac76632c9eeddd1ed6fc66936fc56afc2ed0fd5d9e23da3097
+  - url: https://download.qt.io/official_releases/qt/{{ version.rpartition('.')[0] }}/{{ version }}/submodules/{{ name }}-everywhere-src-{{ version }}.tar.xz
+    sha256: 40caedbf83cc9a1959610830563565889878bc95f115868bbf545d1914acf28e
     folder: {{ name }}
     patches:
-      - patches/0001-Disable-unity-build-for-permission-plugins-in-macos.patch
-      - patches/0002-avoid-using-macos-12-resource.patch
+      - patches/0001-Disable-unity-build-for-permission-plugins-in-macos.patch  # [osx]
+      # https://doc.qt.io/qt-6/macos.html
+      - patches/0002-set-xcode-version.patch  # [osx]
 
   - url: https://download.qt.io/development_releases/prebuilt/llvmpipe/windows/opengl32sw-64-mesa_12_0_rc2.7z  # [win]
     sha256: 2a0d2f92c60e0962ef5f6039d3793424c6f39e49ba27ac04a5b21ca4ae012e15                                   # [win]
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 4
+  number: 0
   skip: True  # [osx and x86_64]
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
   ignore_run_exports:
-    - dbus    # [unix]
+    - dbus     # [unix]
+    - wayland  # [linux]
   missing_dso_whitelist:
     - '*/api-ms-win-shcore-scaling-l1-1-1.dll'     # [win]
     - '*/api-ms-win-core-winrt-l1-1-0.dll'         # [win]
@@ -34,41 +36,45 @@ requirements:
     - {{ stdlib('c') }}
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - patch       # [unix]
-    - pkg-config  # [unix]
-    - bison       # [linux]
-    - flex        # [linux]
-    - gperf       # [linux]
-    - jom         # [win]
+    - pkg-config     # [unix]
+    - bison          # [linux]
+    - flex           # [linux]
+    - gperf          # [linux]
+    - jom            # [win]
     - msys2-bison    # [win]
     - msys2-flex     # [win]
     - msys2-gperf    # [win]
-    - msys2-patch    # [win]
-    - cmake
+    - cmake >=3.22
     - ninja
     - perl
   host:
-    - fontconfig {{ fontconfig }}  # [linux]
-    - libkrb5 {{ krb5 }}              # [linux]
-    - libcups 2.4.2                # [linux]
-    - dbus {{ dbus }}              # [unix]
-    - mysql {{ mysql }}            # [unix]
-    - freetype {{ freetype }}      # [unix]
-    - pcre2 {{ pcre2 }}            # [unix]
-    - libglib {{ libglib }}        # [unix]
-    - jpeg {{ jpeg }}
+    - fontconfig {{ fontconfig }}   # [linux]
+    - libkrb5 {{ krb5 }}            # [linux]
+    - libcups 2.4.2                 # [linux]
+    - dbus {{ dbus }}               # [unix]
+    - freetype {{ freetype }}       # [unix]
+    - pcre2 {{ pcre2 }}             # [unix]
+    - glib {{ glib }}
+    - harfbuzz {{ harfbuzz }}
     - icu {{ icu }}
+    - jpeg {{ jpeg }}
     - libpng {{ libpng }}
-    - openssl {{ openssl }}
     - libpq {{ libpq }}
+    - mysql-devel {{ mysql_libs }}
+    - openssl {{ openssl }}
     - sqlite {{ sqlite }}
     - zlib {{ zlib }}
     - zstd {{ zstd }}
+    # Vulkan support
+    - libvulkan-headers {{ libvulkan }}              # [not osx]
+    - libvulkan-loader {{ libvulkan }}               # [not osx]
     # OpenGL support
+    - libdrm {{ libdrm }}                            # [linux]
     - libxkbcommon {{ libxkbcommon }}                # [linux]
     - libxcb {{ libxcb }}                            # [linux]
     - libgl-devel  {{ libgl }}                       # [linux]
     - libegl-devel {{ libglvnd }}                    # [linux]
+    - mesalib {{ mesalib }}                          # [linux]
     - xcb-util-cursor {{ xcb_util_cursor }}          # [linux]
     - xcb-util-image {{ xcb_util_image }}            # [linux]
     - xcb-util-keysyms {{ xcb_util_keysyms }}        # [linux]
@@ -77,10 +83,8 @@ requirements:
     - xorg-libice {{ xorg_libice }}                  # [linux]
     - xorg-libsm {{ xorg_libsm }}                    # [linux]
     - xorg-libx11 {{ xorg_libx11 }}                  # [linux]
-  run:
-    - mesalib 25         # [linux]
-    - libcups 2.*        # [linux]
-    - mysql {{ mysql }}  # [unix]
+    # Wayland support
+    - wayland {{ wayland }}                          # [linux]
   run_constrained:
     - qt-main >={{ version }},<7
     - qt >={{ version }},<7
@@ -90,9 +94,12 @@ requirements:
 {% set qt_libs = [] %}
 
 outputs:
+# All of the libraries and associated files we expect to find in these packages.
 {% set qt_libs = [ "Core",
                    "Concurrent",
                    "DBus",
+                   "EglFsKmsGbmSupport",  # [linux]
+                   "EglFsKmsSupport",     # [linux]
                    "Gui",
                    "Network",
                    "OpenGL",
@@ -103,21 +110,42 @@ outputs:
                    "Widgets",
                    "Xml"
 ] %}
+
+# The internal Qt libraries that still need to be included to ensure things work. These are separated because there are
+# CMake configs for these libraries but no publicly facing libQt6XXXX.so files.
 {% set private_qt_libs = [ "BuildInternals",
                            "Concurrent",
+                           "ConcurrentPrivate",
+                           "CorePrivate",
                            "CoreTools",
+                           "DBusPrivate",
                            "DBusTools",
                            "DeviceDiscoverySupportPrivate",
                            "EglFSDeviceIntegrationPrivate",  # [unix]
+                           "EglFsKmsGbmSupportPrivate",      # [linux]
+                           "EglFsKmsSupportPrivate",         # [linux]
                            "EntryPointPrivate",              # [win]
+                           "ExamplesAssetDownloaderPrivate",
                            "ExampleIconsPrivate",
+                           "FbSupport",
                            "FbSupportPrivate",
+                           "GuiPrivate",
                            "GuiTools",
+                           "KmsSupportPrivate",              # [linux]
                            "HostInfo",
                            "InputSupportPrivate",            # [unix]
                            "KmsSupportPrivate",              # [unix]
+                           "NetworkPrivate",
+                           "OpenGLPrivate",
+                           "OpenGLWidgetsPrivate",
+                           "PrintSupportPrivate",
+                           "SqlPrivate",
+                           "TestInternalsPrivate",
+                           "TestPrivate",
+                           "WidgetsPrivate",
                            "WidgetsTools",
-                           "XcbQpaPrivate"                   # [unix]
+                           "XcbQpaPrivate",                  # [unix]
+                           "XmlPrivate"
 ] %}
 {% set win_prefix = "" %}          # [not win]
 {% set win_suffix = "" %}          # [not win]
@@ -129,8 +157,6 @@ outputs:
       - "lib/libQt6*.so.*"                 # [linux]
       - "lib/libQt6*.6.dylib"              # [osx]
       - "lib/libQt6*.{{ version }}.dylib"  # [osx]
-      - "lib/libQt6*.a"                    # [unix]
-      - "Library/lib/Qt6*.lib"             # [win]
       - "Library/bin/Qt6*.dll"             # [win]
       - "Library/lib/qt6/bin/Qt6*.dll"     # [win]
       # qt.conf files are overrides used for plugins so should go wherever the plugins go.
@@ -138,6 +164,7 @@ outputs:
       - {{ win_prefix }}bin/qt6.conf
       - {{ win_prefix }}lib/qt6/plugins
       - {{ win_prefix }}share/doc/qt6
+      - {{ win_prefix }}share/qt6/config.summary
 
   - name: {{ name }}-devel
     build:
@@ -164,12 +191,12 @@ outputs:
       - Library/bin/windeployqt6.exe             # [win]
       - {{ win_prefix }}include/qt6
       - "lib/libQt6*.prl"                        # [unix]
+      - "lib/libQt6*.a"                          # [unix]
       - "Library/lib/Qt6*.prl"                   # [win]
+      - "Library/lib/Qt6*.lib"                   # [win
       {% for lib_name in qt_libs %}
       - lib/libQt6{{ lib_name }}{{ SHLIB_EXT }}  # [unix]
-      - Library/lib/Qt6{{ lib_name }}.lib        # [win]
       {% endfor %}
-      - Library/lib/Qt6EntryPoint.lib            # [win]
       {% for lib_name in qt_libs + private_qt_libs %}
       - {{ win_prefix }}lib/cmake/Qt6{{ lib_name }}
       {% endfor %}
@@ -184,6 +211,7 @@ outputs:
       - lib/qt6/qt-cmake-standalone-test         # [unix]
       - lib/qt6/qt-internal-configure-examples   # [unix]
       - lib/qt6/qt-internal-configure-tests      # [unix]
+      - lib/qt6/qt-android-runner.py             # [unix]
       - {{ win_prefix }}lib/qt6/ensure_pro_file.cmake
       - {{ win_prefix }}lib/qt6/qt-testrunner.py
       - {{ win_prefix }}lib/qt6/sanitizer-testrunner.py
@@ -201,22 +229,20 @@ outputs:
       - {{ win_prefix }}lib/qt6/metatypes
       - {{ win_prefix }}lib/qt6/mkspecs
       - {{ win_prefix }}lib/qt6/modules
+      - {{ win_prefix }}lib/qt6/sbom
     test:
       requires:
         - {{ compiler('cxx') }}
         - cmake
         - ninja
-        - dbus          # [linux]
-        - pkg-config    # [linux]
+        - dbus {{ dbus }}  # [unix]
+        - pkg-config       # [linux]
         # These are needed for linking, not runtime
-        - libxkbcommon  # [linux]
+        - libxkbcommon     # [linux]
       files:
         - run_qt_test.sh    # [unix]
         - run_qt_test.bat   # [win]
-        - test/main.cpp
-        - test/test_qmimedatabase.cpp
-        - test/CMakeLists.txt
-        - test/test_opengl.cpp
+        - test/*
       commands:
         {% for lib_name in qt_libs %}
         - test -d $PREFIX/include/qt6/Qt{{ lib_name }}              # [unix]
@@ -226,8 +252,6 @@ outputs:
         - echo Checking for %LIBRARY_LIB%\\Qt6{{ lib_name }}.lib    # [win]
         - if not exist %LIBRARY_LIB%\\Qt6{{ lib_name }}.lib exit 1  # [win]
         {% endfor %}
-        - test ! -f $PREFIX/lib/libQt6WaylandClient${SHLIB_EXT}      # [unix]
-        - test ! -f $PREFIX/lib/libQt6WaylandCompositor${SHLIB_EXT}  # [unix]
         # pkg-config checks for OpenGL modules (CLI-only, no GUI required)
         - export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig       # [linux]
         - pkg-config --cflags Qt6Core                        # [linux]
