@@ -16,9 +16,12 @@ if [[ "${target_platform}" == linux-* ]]; then
     -DQT_FEATURE_xlib=ON
     -DQT_FEATURE_xkbcommon=ON
     -DQT_FEATURE_vulkan=OFF
-    -DQT_FEATURE_wayland=OFF
+    -DQT_FEATURE_wayland=ON
   "
 fi
+
+# TODO: Somehow set APPLICATION_EXTENSION_API_ONLY on OSX to avoid this?
+# ld: warning: linking against a dylib which is not safe for use in application extensions: $PREFIX/lib/libz.dylib
 
 cmake -S"${SRC_DIR}/${PKG_NAME}" -Bbuild -GNinja ${CMAKE_ARGS} \
   -DCMAKE_PREFIX_PATH=${PREFIX} \
