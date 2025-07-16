@@ -1,10 +1,9 @@
-MACOSX_SDK_VERSION:                                          # [osx]
 # The required version for Qt is actually 12, but 0002-avoid-using-macos-12-resource.patch removes this requirement
 # and brings it back to v11.
-  - '11.3'                                                   # [osx]
-CONDA_BUILD_SYSROOT:                                         # [osx]
-  - /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk  # [osx]
-c_compiler:
-  - vs2019  # [win]
-cxx_compiler:
-  - vs2019  # [win]
+c_stdlib_version:  # [osx]
+  - 11.3           # [osx]
+CONDA_BUILD_SYSROOT:
+  - /opt/MacOSX11.3.sdk                                      # [osx and x86_64]
+  - /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk  # [osx and arm64]
+mysql:
+  - 8.4.*
