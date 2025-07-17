@@ -65,6 +65,10 @@ requirements:
     - sqlite {{ sqlite }}
     - zlib {{ zlib }}
     - zstd {{ zstd }}
+    # Wayland support
+    - libvulkan-headers                              # [linux]
+    - libvulkan-loader                               # [linux]
+    - wayland                                        # [linux]
     # OpenGL support
     - libxkbcommon {{ libxkbcommon }}                # [linux]
     - libxcb {{ libxcb }}                            # [linux]

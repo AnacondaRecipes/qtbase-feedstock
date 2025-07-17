@@ -15,7 +15,7 @@ if [[ "${target_platform}" == linux-* ]]; then
     -DQT_FEATURE_xcb_xlib=ON
     -DQT_FEATURE_xlib=ON
     -DQT_FEATURE_xkbcommon=ON
-    -DQT_FEATURE_vulkan=OFF
+    -DQT_FEATURE_vulkan=ON
     -DQT_FEATURE_wayland=ON
   "
 else
