@@ -15,7 +15,7 @@ if [[ "${target_platform}" == linux-* ]]; then
     -DQT_FEATURE_xcb_xlib=ON
     -DQT_FEATURE_xlib=ON
     -DQT_FEATURE_xkbcommon=ON
-    -DQT_FEATURE_vulkan=ON
+    -DQT_FEATURE_vulkan=OFF
     -DQT_FEATURE_wayland=ON
   "
 else
@@ -23,6 +23,7 @@ else
   # ld: warning: linking against a dylib which is not safe for use in application extensions: $PREFIX/lib/libz.dylib
   CMAKE_ARGS="
     ${CMAKE_ARGS}
+    -DQT_FORCE_WARN_APPLE_SDK_AND_XCODE_CHECK=ON
     -DQT_APPLE_SDK_PATH=${CONDA_BUILD_SYSROOT}
     -DQT_MAC_SDK_VERSION=${OSX_SDK_VER}
   "
