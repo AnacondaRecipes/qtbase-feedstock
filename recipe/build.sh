@@ -15,15 +15,20 @@ if [[ "${target_platform}" == linux-* ]]; then
     -DQT_FEATURE_xcb_xlib=ON
     -DQT_FEATURE_xlib=ON
     -DQT_FEATURE_xkbcommon=ON
-    -DQT_FEATURE_vulkan=OFF
+    -DQT_FEATURE_vulkan=ON
     -DQT_FEATURE_wayland=ON
+  "
+else
+  # TODO: Somehow set APPLICATION_EXTENSION_API_ONLY on OSX to avoid this?
+  # ld: warning: linking against a dylib which is not safe for use in application extensions: $PREFIX/lib/libz.dylib
+  CMAKE_ARGS="
+    ${CMAKE_ARGS}
+    -DQT_APPLE_SDK_PATH=${CONDA_BUILD_SYSROOT}
+    -DQT_MAC_SDK_VERSION=${OSX_SDK_VER}
   "
 fi
 
-# TODO: Somehow set APPLICATION_EXTENSION_API_ONLY on OSX to avoid this?
-# ld: warning: linking against a dylib which is not safe for use in application extensions: $PREFIX/lib/libz.dylib
-
-cmake -S"${SRC_DIR}/${PKG_NAME}" -Bbuild -GNinja ${CMAKE_ARGS} \
+cmake --log-level STATUS -S"${SRC_DIR}/${PKG_NAME}" -Bbuild -GNinja ${CMAKE_ARGS} \
   -DCMAKE_PREFIX_PATH=${PREFIX} \
   -DCMAKE_INSTALL_PREFIX=${PREFIX} \
   -DCMAKE_INSTALL_RPATH=${PREFIX}/lib \
@@ -72,6 +77,10 @@ cmake -S"${SRC_DIR}/${PKG_NAME}" -Bbuild -GNinja ${CMAKE_ARGS} \
   -DQT_FEATURE_enable_new_dtags=OFF
 cmake --build build --target install --parallel ${CPU_COUNT}
 
+# Include the build config in the package for reference later.
+mkdir -p ${PREFIX}/share/qt6
+cp ./build/config.summary ${PREFIX}/share/qt6/
+
 pushd "${PREFIX}"
 
 mkdir -p bin
@@ -86,7 +95,13 @@ if [[ -f "${SRC_DIR}"/build/user_facing_tool_links.txt ]]; then
   done
 fi
 
-cat << EOF > bin/qt6.conf
+# You can find the expected values of these files in the log
+# For example Translations will be listed as
+# INSTALL_TRANSLATIONSDIR
+# This file should be in the location of the user's executable
+# for conda, this becomes PREFIX/bin/
+# https://doc.qt.io/qt-6/qt-conf.html
+cat << EOF >${PREFIX}/bin/qt6.conf
 [Paths]
 Prefix = ${PREFIX}
 Documentation = ${PREFIX}/share/doc/qt6
