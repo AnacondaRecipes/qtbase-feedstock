@@ -1,9 +1,32 @@
-# The required version for Qt is actually 12, but 0002-avoid-using-macos-12-resource.patch removes this requirement
-# and brings it back to v11.
-c_stdlib_version:  # [osx]
-  - 11.3           # [osx]
+# Qt 6.9 builds with XCode 15 and macOS 14 SDK but supports a minimum macOS version of 12. This requires matching
+# compiler versions as well for something around the same version that originally shipped with XCode 15. For us,
+# that is clang 17.
+
+# https://doc.qt.io/qt-6/macos.html
+c_stdlib_version:  # [not linux]
+  - 12.0           # [osx]
+  - 2022.12        # [win]
+OSX_SDK_VER:
+  - 13.3
+
+# https://doc.qt.io/qt-6/windows.html
+c_compiler:    # [win]
+  - vs2022     # [win]
+cxx_compiler:  # [win]
+  - vs2022     # [win]
+
+# XCode 15.0 came with SDK 14.0 and clang 15
+# https://en.wikipedia.org/wiki/Xcode
+c_compiler_version:    # [osx]
+  - 17                 # [osx]
+cxx_compiler_version:  # [osx]
+  - 17                 # [osx]
+
+# Need at least a 12.0 host or else tests will fail.
+extra_labels_for_os:
+  osx-arm64: [ventura]
+
+# Have to leave this for now or else the overlinking checks fail when we revert back to the aggregate CBC and use the
+# 11.1 sysroot.
 CONDA_BUILD_SYSROOT:
-  - /opt/MacOSX11.3.sdk                                      # [osx and x86_64]
-  - /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk  # [osx and arm64]
-mysql:
-  - 8.4.*
+  - /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk  # [osx and arm64]

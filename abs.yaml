@@ -1,0 +1,3 @@
+channels:
+  - https://staging.continuum.io/prefect/fs/vulkan-headers-feedstock/pr1/18f9cd0
+  - https://staging.continuum.io/prefect/fs/vulkan-loader-feedstock/pr1/4eef359
