@@ -65,10 +65,9 @@ requirements:
     - sqlite {{ sqlite }}
     - zlib {{ zlib }}
     - zstd {{ zstd }}
-    # Wayland support
+    # Vulkan support
     - libvulkan-headers                              # [linux]
     - libvulkan-loader                               # [linux]
-    - wayland                                        # [linux]
     # OpenGL support
     - libxkbcommon {{ libxkbcommon }}                # [linux]
     - libxcb {{ libxcb }}                            # [linux]
@@ -152,6 +151,8 @@ outputs:
       - "lib/libQt6*.so.*"                 # [linux]
       - "lib/libQt6*.6.dylib"              # [osx]
       - "lib/libQt6*.{{ version }}.dylib"  # [osx]
+      - "lib/libQt6*.a"                    # [unix]
+      - "Library/lib/Qt6*.lib"             # [win]
       - "Library/bin/Qt6*.dll"             # [win]
       - "Library/lib/qt6/bin/Qt6*.dll"     # [win]
       # qt.conf files are overrides used for plugins so should go wherever the plugins go.
