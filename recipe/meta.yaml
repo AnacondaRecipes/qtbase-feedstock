@@ -35,16 +35,16 @@ requirements:
     - {{ stdlib('c') }}
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - patch       # [osx]
-    - pkg-config  # [unix]
-    - bison       # [linux]
-    - flex        # [linux]
-    - gperf       # [linux]
-    - jom         # [win]
-    - m2-bison    # [win]
-    - m2-flex     # [win]
-    - m2-gperf    # [win]
-    - m2-patch    # [win]
+    - patch          # [osx]
+    - pkg-config     # [unix]
+    - bison          # [linux]
+    - flex           # [linux]
+    - gperf          # [linux]
+    - jom            # [win]
+    - msys2-bison    # [win]
+    - msys2-flex     # [win]
+    - msys2-gperf    # [win]
+    - msys2-patch    # [win]
     - cmake >=3.22
     - ninja
     - perl
@@ -57,6 +57,7 @@ requirements:
     - freetype {{ freetype }}       # [unix]
     - pcre2 {{ pcre2 }}             # [unix]
     - libglib {{ libglib }}         # [unix]
+    - harfbuzz {{ harfbuzz }}
     - jpeg {{ jpeg }}
     - icu {{ icu }}
     - libpng {{ libpng }}

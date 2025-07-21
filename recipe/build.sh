@@ -63,8 +63,7 @@ cmake --log-level STATUS -S"${SRC_DIR}/${PKG_NAME}" -Bbuild -GNinja ${CMAKE_ARGS
   -DQT_FEATURE_sql_mysql=ON \
   -DQT_FEATURE_sql_psql=ON \
   -DQT_FEATURE_mtdev=OFF \
-  -DQT_FEATURE_harfbuzz=OFF \
-  -DQT_FEATURE_system_harfbuzz=OFF \
+  -DQT_FEATURE_system_harfbuzz=ON \
   -DQT_FEATURE_system_freetype=ON \
   -DQT_FEATURE_system_jpeg=ON \
   -DQT_FEATURE_system_pcre2=ON \
