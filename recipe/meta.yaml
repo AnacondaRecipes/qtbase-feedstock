@@ -18,7 +18,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 2
+  number: 3
   skip: True  # [osx and x86_64]
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
@@ -129,6 +129,8 @@ outputs:
       - "lib/libQt6*.so.*"                 # [linux]
       - "lib/libQt6*.6.dylib"              # [osx]
       - "lib/libQt6*.{{ version }}.dylib"  # [osx]
+      - "lib/libQt6*.a"                    # [unix]
+      - "Library/lib/Qt6*.lib"             # [win]
       - "Library/bin/Qt6*.dll"             # [win]
       - "Library/lib/qt6/bin/Qt6*.dll"     # [win]
       # qt.conf files are overrides used for plugins so should go wherever the plugins go.
