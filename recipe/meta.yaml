@@ -18,7 +18,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 3
+  number: 4
   skip: True  # [osx and x86_64]
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
@@ -40,16 +40,16 @@ requirements:
     - flex        # [linux]
     - gperf       # [linux]
     - jom         # [win]
-    - m2-bison    # [win]
-    - m2-flex     # [win]
-    - m2-gperf    # [win]
-    - m2-patch    # [win]
+    - msys2-bison    # [win]
+    - msys2-flex     # [win]
+    - msys2-gperf    # [win]
+    - msys2-patch    # [win]
     - cmake
     - ninja
     - perl
   host:
     - fontconfig {{ fontconfig }}  # [linux]
-    - krb5 {{ krb5 }}              # [linux]
+    - libkrb5 {{ krb5 }}              # [linux]
     - libcups 2.4.2                # [linux]
     - dbus {{ dbus }}              # [unix]
     - mysql {{ mysql }}            # [unix]
