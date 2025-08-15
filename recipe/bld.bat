@@ -10,7 +10,7 @@ set OPENGLVER=dynamic
 @REM https://bugreports.qt.io/browse/QTBUG-107009
 set "PATH=%SRC_DIR%\build\lib\qt6\bin;%PATH%"
 
-cmake -S"%SRC_DIR%/%PKG_NAME%" -B"%SRC_DIR%\build" -GNinja ^
+cmake --log-level STATUS  -S"%SRC_DIR%/%PKG_NAME%" -B"%SRC_DIR%\build" -GNinja ^
     -DCMAKE_BUILD_TYPE=Release ^
     -DCMAKE_PREFIX_PATH="%LIBRARY_PREFIX%" ^
     -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" ^
@@ -38,10 +38,12 @@ cmake -S"%SRC_DIR%/%PKG_NAME%" -B"%SRC_DIR%\build" -GNinja ^
     -DQT_FEATURE_system_sqlite=ON ^
     -DQT_FEATURE_sql_mysql=OFF ^
     -DQT_FEATURE_sql_psql=ON ^
-    -DQT_FEATURE_harfbuzz=OFF ^
+    -DQT_FEATURE_harfbuzz=ON ^
     -DQT_FEATURE_jpeg=ON ^
     -DQT_FEATURE_system_jpeg=ON ^
     -DQT_FEATURE_system_png=ON ^
+    -DQT_FEATURE_system_harfbuzz=ON ^
+    -DQT_FEATURE_vulkan=ON ^
     -DQT_FEATURE_enable_new_dtags=OFF ^
     -DINPUT_opengl=%OPENGLVER%
 if errorlevel 1 exit 1
@@ -60,6 +62,10 @@ copy %LIBRARY_PREFIX%\lib\qt6\bin\androiddeployqt.exe %LIBRARY_PREFIX%\bin\andro
 if errorlevel 1 exit 1
 copy %LIBRARY_PREFIX%\lib\qt6\bin\windeployqt.exe %LIBRARY_PREFIX%\bin\windeployqt6.exe
 if errorlevel 1 exit 1
+
+:: Include the build config in the package for reference later.
+mkdir %LIBRARY_PREFIX%\share\qt6
+copy .\build\config.summary %LIBRARY_PREFIX%\share\qt6\config.summary
 
 echo [Paths]                                                     > %LIBRARY_BIN%\qt6.conf
 echo Prefix = %PREFIX:\=/%                                      >> %LIBRARY_BIN%\qt6.conf

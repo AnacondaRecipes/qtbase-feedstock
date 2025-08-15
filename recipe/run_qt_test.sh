@@ -4,8 +4,8 @@ set -ex
 
 test -f ${PREFIX}/bin/qt6.conf
 
-cmake -Stest -Bbuild -GNinja
-cmake --build build --target all
+cmake -Stest -Bbuild -GNinja -DCMAKE_BUILD_TYPE=Release
+cmake --build build --target all --config Release
 
 if [ "$(uname)" = "Linux" ]; then
     # Ensure /etc/machine-id exists and is valid for D-Bus/Qt
@@ -17,5 +17,3 @@ if [ "$(uname)" = "Linux" ]; then
 else
     ctest --test-dir build --output-on-failure
 fi
-
-./build/hello
