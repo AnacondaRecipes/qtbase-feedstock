@@ -1,0 +1,79 @@
+From 1c22025344be8dc67b33f9984caee26f27ea9528 Mon Sep 17 00:00:00 2001
+From: Brian Wing <bwing@anaconda.com>
+Date: Wed, 3 Sep 2025 20:42:48 -0400
+Subject: [PATCH] Force qmake to use SDKROOT on OSX
+
+---
+ mkspecs/features/mac/sdk.prf | 41 ++++++++++++++++++++++--------------
+ 1 file changed, 25 insertions(+), 16 deletions(-)
+
+diff --git a/mkspecs/features/mac/sdk.prf b/mkspecs/features/mac/sdk.prf
+index 3a9c2778bbe..753926b9265 100644
+--- a/mkspecs/features/mac/sdk.prf
++++ b/mkspecs/features/mac/sdk.prf
+@@ -6,16 +6,21 @@ contains(QMAKE_MAC_SDK, .*/.*): \
+     error("QMAKE_MAC_SDK can only contain short-form SDK names (eg. macosx, iphoneos)")
+ 
+ defineReplace(xcodeSDKInfo) {
++    sdk = $$2
++    isEmpty(sdk): \
++        sdk = $$QMAKE_MAC_SDK
++
+     info = $$1
+-    equals(info, "Path"): \
++    equals(info, "Path"): {
+         infoarg = --show-sdk-path
++        QMAKE_MAC_SDK.$${sdk}.$${info} = $$(SDKROOT)
++    }
+     equals(info, "PlatformPath"): \
+         infoarg = --show-sdk-platform-path
+-    equals(info, "SDKVersion"): \
++    equals(info, "SDKVersion"): {
+         infoarg = --show-sdk-version
+-    sdk = $$2
+-    isEmpty(sdk): \
+-        sdk = $$QMAKE_MAC_SDK
++        QMAKE_MAC_SDK.$${sdk}.$${info} = $$(OSX_SDK_VER)
++    }
+ 
+     isEmpty(QMAKE_MAC_SDK.$${sdk}.$${info}) {
+         QMAKE_MAC_SDK.$${sdk}.$${info} = $$system("/usr/bin/xcrun --sdk $$sdk $$infoarg 2>/dev/null")
+@@ -42,20 +47,24 @@ isEmpty(QMAKE_EXPORT_INCDIR_OPENGL) {
+ 
+ QMAKESPEC_NAME = $$basename(QMAKESPEC)
+ 
++CONDA_BUILD = $$(CONDA_BUILD)
++
+ # Resolve SDK version of various tools
+ for(tool, $$list(QMAKE_CC QMAKE_CXX QMAKE_FIX_RPATH QMAKE_AR QMAKE_RANLIB QMAKE_LINK QMAKE_LINK_SHLIB QMAKE_ACTOOL QMAKE_LINK_C QMAKE_LINK_C_SHLIB)) {
+-    tool_variable = QMAKE_MAC_SDK.$${QMAKESPEC_NAME}.$${QMAKE_MAC_SDK}.$${tool}
+-    !isEmpty($$tool_variable) {
+-        $$tool = $$eval($$tool_variable)
+-        next()
+-    }
++    isEmpty(CONDA_BUILD) {
++        tool_variable = QMAKE_MAC_SDK.$${QMAKESPEC_NAME}.$${QMAKE_MAC_SDK}.$${tool}
++        !isEmpty($$tool_variable) {
++            $$tool = $$eval($$tool_variable)
++            next()
++        }
+ 
+-    value = $$eval($$tool)
+-    isEmpty(value): next()
++        value = $$eval($$tool)
++        isEmpty(value): next()
+ 
+-    sysrooted = $$system("/usr/bin/xcrun -sdk $$QMAKE_MAC_SDK -find $$first(value) 2>/dev/null")
+-    isEmpty(sysrooted): next()
++        sysrooted = $$system("/usr/bin/xcrun -sdk $$QMAKE_MAC_SDK -find $$first(value) 2>/dev/null")
++        isEmpty(sysrooted): next()
+ 
+-    $$tool = $$sysrooted $$member(value, 1, -1)
+-    cache($$tool_variable, set stash, $$tool)
++        $$tool = $$sysrooted $$member(value, 1, -1)
++        cache($$tool_variable, set stash, $$tool)
++    }
+ }
+-- 
+2.50.1
+
