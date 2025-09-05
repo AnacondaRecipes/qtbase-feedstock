@@ -13,14 +13,14 @@ source:
       - patches/0001-Disable-unity-build-for-permission-plugins-in-macos.patch  # [osx]
       # https://doc.qt.io/qt-6/macos.html
       - patches/0002-set-xcode-version.patch  # [osx]
+      - patches/0003-force-qmake-to-use-sdkroot-on-osx.patch  # [osx]
 
   - url: https://download.qt.io/development_releases/prebuilt/llvmpipe/windows/opengl32sw-64-mesa_12_0_rc2.7z  # [win]
     sha256: 2a0d2f92c60e0962ef5f6039d3793424c6f39e49ba27ac04a5b21ca4ae012e15                                   # [win]
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 0
-  skip: True  # [osx and x86_64]
+  number: 1
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
   ignore_run_exports:
@@ -232,6 +232,7 @@ outputs:
       - {{ win_prefix }}lib/qt6/sbom
     test:
       requires:
+        - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
         - cmake
         - ninja
@@ -242,6 +243,7 @@ outputs:
       files:
         - run_qt_test.sh    # [unix]
         - run_qt_test.bat   # [win]
+        - xvfb-run          # [osx]
         - test/*
       commands:
         {% for lib_name in qt_libs %}
