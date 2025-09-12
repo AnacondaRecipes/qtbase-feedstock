@@ -1,5 +1,5 @@
 {% set name = "qtbase" %}
-{% set version = "6.9.1" %}
+{% set version = "6.9.2" %}
 
 package:
   name: {{ name }}
@@ -7,7 +7,7 @@ package:
 
 source:
   - url: https://download.qt.io/official_releases/qt/{{ version.rpartition('.')[0] }}/{{ version }}/submodules/{{ name }}-everywhere-src-{{ version }}.tar.xz
-    sha256: 40caedbf83cc9a1959610830563565889878bc95f115868bbf545d1914acf28e
+    sha256: 44be9c9ecfe04129c4dea0a7e1b36ad476c9cc07c292016ac98e7b41514f2440
     folder: {{ name }}
     patches:
       - patches/0001-Disable-unity-build-for-permission-plugins-in-macos.patch  # [osx]
@@ -20,7 +20,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 1
+  number: 0
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
   ignore_run_exports:
