@@ -178,7 +178,7 @@ outputs:
         - {{ compiler('cxx') }}
       host:
         - {{ pin_subpackage(name, exact=True) }}
-        - pcre2 {{ pcre2 }}  # [unix]
+        - pcre2 10.42  # [unix]
         - zstd {{ zstd }}
       run:
         - {{ pin_subpackage(name, exact=True) }}
