@@ -56,7 +56,7 @@ requirements:
     - libcups 2.4.2                 # [linux]
     - dbus {{ dbus }}               # [unix]
     - freetype {{ freetype }}       # [unix]
-    - pcre2 {{ pcre2 }}             # [unix]
+    - pcre2 10.42                   # [unix]
     - glib {{ glib }}
     - harfbuzz {{ harfbuzz }}
     - icu {{ icu }}
