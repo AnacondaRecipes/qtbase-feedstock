@@ -2,6 +2,12 @@
 
 set -ex
 
+# workaround to get PBP to see that OSX_SDK_DIR is used
+# and thus get it forwarded to the build
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo $OSX_SDK_DIR
+fi
+
 # OpenGL support
 if [[ "${target_platform}" == linux-* ]]; then
   CMAKE_ARGS="
