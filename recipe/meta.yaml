@@ -20,7 +20,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 1
+  number: 2
   # https://doc.qt.io/qt-6/qt-releases.html#binary-compatibility
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
@@ -31,6 +31,8 @@ build:
     - '*/api-ms-win-shcore-scaling-l1-1-1.dll'     # [win]
     - '*/api-ms-win-core-winrt-l1-1-0.dll'         # [win]
     - '*/api-ms-win-core-winrt-string-l1-1-0.dll'  # [win]
+    - '*/api-ms-win-core-winrt-error-l1-1-0.dll'   # [win]
+    - '*/api-ms-win-core-winrt-error-l1-1-1.dll'   # [win]
 
 requirements:
   build:
@@ -54,7 +56,7 @@ requirements:
     - libcups 2.4.2                 # [linux]
     - dbus {{ dbus }}               # [unix]
     - freetype {{ freetype }}       # [unix]
-    - pcre2 {{ pcre2 }}             # [unix]
+    - pcre2 10.42                   # [unix]
     - glib {{ glib }}
     - harfbuzz {{ harfbuzz }}
     - icu {{ icu }}
@@ -157,6 +159,7 @@ outputs:
       - "lib/libQt6*.{{ version }}.dylib"  # [osx]
       - "Library/bin/Qt6*.dll"             # [win]
       - "Library/lib/qt6/bin/Qt6*.dll"     # [win]
+      - "Library/bin/opengl32sw.dll"       # [win]
       # qt.conf files are overrides used for plugins so should go wherever the plugins go.
       - qt6.conf                           # [win]
       - {{ win_prefix }}bin/qt6.conf
@@ -175,7 +178,7 @@ outputs:
         - {{ compiler('cxx') }}
       host:
         - {{ pin_subpackage(name, exact=True) }}
-        - pcre2 {{ pcre2 }}  # [unix]
+        - pcre2 10.42  # [unix]
         - zstd {{ zstd }}
       run:
         - {{ pin_subpackage(name, exact=True) }}
