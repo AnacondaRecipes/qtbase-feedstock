@@ -20,7 +20,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 2
+  number: 3
   # https://doc.qt.io/qt-6/qt-releases.html#binary-compatibility
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
@@ -88,6 +88,10 @@ requirements:
     - xorg-libx11 {{ xorg_libx11 }}                  # [linux]
     # Wayland support
     - wayland {{ wayland }}                          # [linux]
+  run:
+    # Min windows version is Windows 10, version 1809 (10.0.17763)
+    # https://doc.qt.io/qt-6.9/windows.html#supported-configurations
+    - __win >=10.0.17763                             # [win]
 
 # An empty dummy variable has to be declared here or else the real list within the `outputs` block will be scoped only
 # to that block and not usable below in the `qtbase` package tests.
