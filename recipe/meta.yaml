@@ -20,7 +20,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 3
+  number: 4
   # https://doc.qt.io/qt-6/qt-releases.html#binary-compatibility
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
@@ -289,7 +289,7 @@ test:
     - test -f $PREFIX/lib/qt6/plugins/imageformats/libqjpeg${SHLIB_EXT}    # [unix]
 
 about:
-  home: https://www.qt.io/
+  home: https://www.qt.io
   license: LGPL-3.0-only
   license_file: {{ name }}/LICENSES/LGPL-3.0-only.txt
   license_family: LGPL
@@ -297,7 +297,7 @@ about:
   description: |
     Qt helps you create connected devices, UIs & applications that run
     anywhere on any device, on any operating system at any time ({{ name[2:] }} libraries).
-  doc_url: https://doc.qt.io/
+  doc_url: https://doc.qt.io
   dev_url: https://github.com/qt/{{ name }}
 
 extra:
