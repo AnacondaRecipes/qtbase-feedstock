@@ -41,6 +41,7 @@ cmake --log-level STATUS  -S"%SRC_DIR%/%PKG_NAME%" -B"%SRC_DIR%\build" -GNinja ^
     -DQT_FEATURE_harfbuzz=ON ^
     -DQT_FEATURE_jpeg=ON ^
     -DQT_FEATURE_system_jpeg=ON ^
+    -DQT_FEATURE_system_pcre2=ON ^
     -DQT_FEATURE_system_png=ON ^
     -DQT_FEATURE_system_harfbuzz=ON ^
     -DQT_FEATURE_vulkan=ON ^
