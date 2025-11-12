@@ -45,6 +45,9 @@ target_link_libraries (widgets_test PRIVATE Qt6::Widgets)
 add_executable (xml_test test_xml.cpp)
 target_link_libraries (xml_test PRIVATE Qt6::Xml)
 
+add_executable (test_qlibraryinfo_prefixpath test_qlibraryinfo_prefixpath.cpp)
+target_link_libraries (test_qlibraryinfo_prefixpath Qt6::Core)
+
 enable_testing ()
 add_test (NAME test_concurrent COMMAND concurrent_test)
 add_test (NAME test_core COMMAND core_test)
@@ -57,6 +60,7 @@ add_test (NAME test_sql COMMAND sql_test)
 add_test (NAME test_test COMMAND test_test)
 add_test (NAME test_widgets COMMAND widgets_test)
 add_test (NAME test_xml COMMAND xml_test)
+add_test (NAME test_qlibraryinfo_prefixpath COMMAND test_qlibraryinfo_prefixpath)
 
 if (NOT WIN32)
   add_test (NAME test_opengl COMMAND opengl_test)
