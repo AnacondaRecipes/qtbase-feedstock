@@ -169,7 +169,6 @@ outputs:
       # qt.conf files are overrides used for plugins so should go wherever the plugins go.
       - qt6.conf                           # [win]
       - {{ win_prefix }}bin/qt6.conf
-      - {{ win_prefix }}lib/qt6/qt6.conf
       - {{ win_prefix }}lib/qt6/plugins
       - {{ win_prefix }}share/doc/qt6
       - {{ win_prefix }}share/qt6/config.summary

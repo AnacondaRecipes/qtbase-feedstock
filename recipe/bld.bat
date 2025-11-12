@@ -88,4 +88,3 @@ echo HostBinaries = %LIBRARY_LIB:\=/%/qt6/bin                   >> %LIBRARY_BIN%
 echo HostLibraryExecutables = %LIBRARY_LIB:\=/%/qt6             >> %LIBRARY_BIN%\qt6.conf
 echo HostLibraries = %LIBRARY_LIB:\=/%                          >> %LIBRARY_BIN%\qt6.conf
 copy "%LIBRARY_BIN%\qt6.conf" "%PREFIX%\qt6.conf"
-copy "%LIBRARY_BIN%\qt6.conf" "%LIBRARY_LIB%\qt6\qt6.conf"
