@@ -68,6 +68,7 @@ if errorlevel 1 exit 1
 mkdir %LIBRARY_PREFIX%\share\qt6
 copy .\build\config.summary %LIBRARY_PREFIX%\share\qt6\config.summary
 
+:: Create qt6.conf file. See: https://doc.qt.io/qt-6/qt-conf.html
 echo [Paths]                                                     > %LIBRARY_BIN%\qt6.conf
 echo Prefix = %PREFIX:\=/%                                      >> %LIBRARY_BIN%\qt6.conf
 echo Documentation = %LIBRARY_PREFIX:\=/%/share/doc/qt6         >> %LIBRARY_BIN%\qt6.conf
@@ -87,3 +88,4 @@ echo HostBinaries = %LIBRARY_LIB:\=/%/qt6/bin                   >> %LIBRARY_BIN%
 echo HostLibraryExecutables = %LIBRARY_LIB:\=/%/qt6             >> %LIBRARY_BIN%\qt6.conf
 echo HostLibraries = %LIBRARY_LIB:\=/%                          >> %LIBRARY_BIN%\qt6.conf
 copy "%LIBRARY_BIN%\qt6.conf" "%PREFIX%\qt6.conf"
+copy "%LIBRARY_BIN%\qt6.conf" "%LIBRARY_LIB%\qt6\qt6.conf"

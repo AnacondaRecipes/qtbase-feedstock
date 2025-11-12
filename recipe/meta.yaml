@@ -20,7 +20,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 4
+  number: 5
   # https://doc.qt.io/qt-6/qt-releases.html#binary-compatibility
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
@@ -167,6 +167,7 @@ outputs:
       # qt.conf files are overrides used for plugins so should go wherever the plugins go.
       - qt6.conf                           # [win]
       - {{ win_prefix }}bin/qt6.conf
+      - {{ win_prefix }}lib/qt6/qt6.conf
       - {{ win_prefix }}lib/qt6/plugins
       - {{ win_prefix }}share/doc/qt6
       - {{ win_prefix }}share/qt6/config.summary

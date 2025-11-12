@@ -123,5 +123,5 @@ Translations = ${PREFIX}/share/qt6/translations
 Examples = ${PREFIX}/share/doc/qt6/examples
 Tests = ${PREFIX}/tests
 EOF
-
+cp ${PREFIX}/bin/qt6.conf ${PREFIX}/lib/qt6/qt6.conf
 popd
