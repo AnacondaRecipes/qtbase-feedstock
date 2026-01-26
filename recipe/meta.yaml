@@ -1,5 +1,5 @@
 {% set name = "qtbase" %}
-{% set version = "6.9.2" %}
+{% set version = "6.10.1" %}
 
 package:
   name: {{ name }}
@@ -7,28 +7,35 @@ package:
 
 source:
   - url: https://download.qt.io/official_releases/qt/{{ version.rpartition('.')[0] }}/{{ version }}/submodules/{{ name }}-everywhere-src-{{ version }}.tar.xz
-    sha256: 44be9c9ecfe04129c4dea0a7e1b36ad476c9cc07c292016ac98e7b41514f2440
+    sha256: 5a6226f7e23db51fdc3223121eba53f3f5447cf0cc4d6cb82a3a2df7a65d265d
     folder: {{ name }}
     patches:
-      - patches/0001-Disable-unity-build-for-permission-plugins-in-macos.patch  # [osx]
-      # https://doc.qt.io/qt-6/macos.html
-      - patches/0002-set-xcode-version.patch  # [osx]
-      - patches/0003-force-qmake-to-use-sdkroot-on-osx.patch  # [osx]
-      - patches/0004-qt6-conf-osx.patch  # [osx]
-      - patches/0005-fix-qlibraryinfo-prefixpath-windows.patch # [win]
+      # https://doc.qt.io/qt-6/macos.html#supported-configurations
+      # Build Environment - Xcode 15 (macOS 14 SDK) or higher
+      - patches/0001-Set-XCode-version-15.patch  # [osx]
+      - patches/0002-force-qmake-to-use-sdkroot-on-osx.patch  # [osx]
+      # https://github.com/conda-forge/qt-main-feedstock/issues/150
+      # When Qt apps are bundled on macOS, Qt's CFBundleCopyResourceURL code searches for qt.conf inside the bundle's Resources directory first.
+      # This overrides conda's environment-based qt.conf, breaking plugin loading and library resolution for conda-installed Qt applications.
+      - patches/0003-Removes-the-macOS-specific-CFBundleGetMainBundle.patch  # [osx]
+      - patches/0004-Handle-library-location-path-for-Windows-builds.patch  # [win]
+      # Fix for qtwebengine on osx:
+      # qmake6 -Wall -Wparser qtwebengine.pro
+      # Could not find qmake spec 'macx-clang'.
+      - patches/0005-Prevent-usage-absolute-path-to-the-currently-running.patch
 
   - url: https://download.qt.io/development_releases/prebuilt/llvmpipe/windows/opengl32sw-64-mesa_12_0_rc2.7z  # [win]
     sha256: 2a0d2f92c60e0962ef5f6039d3793424c6f39e49ba27ac04a5b21ca4ae012e15                                   # [win]
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 5
+  number: 0
   # https://doc.qt.io/qt-6/qt-releases.html#binary-compatibility
+  # compiled against Qt 6.0.0 should still run with any other Qt 6 release
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
   ignore_run_exports:
     - dbus     # [unix]
-    - wayland  # [linux]
   missing_dso_whitelist:
     - '*/api-ms-win-shcore-scaling-l1-1-1.dll'     # [win]
     - '*/api-ms-win-core-winrt-l1-1-0.dll'         # [win]
@@ -50,12 +57,12 @@ requirements:
     - msys2-flex     # [win]
     - msys2-gperf    # [win]
     - cmake >=3.22
-    - ninja
+    - ninja-base
     - perl
   host:
     - fontconfig {{ fontconfig }}   # [linux]
     - libkrb5 {{ krb5 }}            # [linux]
-    - libcups 2.4.2                 # [linux]
+    - libcups {{ libcups }}         # [linux]
     - dbus {{ dbus }}               # [unix]
     - freetype {{ freetype }}       # [unix]
     - pcre2 {{ pcre2 }}
@@ -92,7 +99,7 @@ requirements:
     - wayland {{ wayland }}                          # [linux]
   run:
     # Min windows version is Windows 10, version 1809 (10.0.17763)
-    # https://doc.qt.io/qt-6.9/windows.html#supported-configurations
+    # https://doc.qt.io/qt-6/windows.html#supported-configurations
     - __win >=10.0.17763                             # [win]
 
 # An empty dummy variable has to be declared here or else the real list within the `outputs` block will be scoped only
@@ -104,8 +111,8 @@ outputs:
 {% set qt_libs = [ "Core",
                    "Concurrent",
                    "DBus",
-                   "EglFsKmsGbmSupport",  # [linux]
-                   "EglFsKmsSupport",     # [linux]
+                   "EglFsKmsGbmSupport",      # [linux]
+                   "EglFsKmsSupport",         # [linux]
                    "Gui",
                    "Network",
                    "OpenGL",
@@ -114,7 +121,11 @@ outputs:
                    "Sql",
                    "Test",
                    "Widgets",
-                   "Xml"
+                   "WaylandClient",           # [linux]
+                   "Xml",
+                   "XcbQpa",                  # [linux]
+                   "EglFSDeviceIntegration",  # [linux]
+                   "WlShellIntegration",      # [linux]
 ] %}
 
 # The internal Qt libraries that still need to be included to ensure things work. These are separated because there are
@@ -151,8 +162,16 @@ outputs:
                            "WidgetsPrivate",
                            "WidgetsTools",
                            "XcbQpaPrivate",                  # [unix]
-                           "XmlPrivate"
+                           "XmlPrivate",
+                           "WaylandClientPrivate",           # [linux]
+                           "WaylandGlobalPrivate",           # [linux]
+                           "WaylandScannerTools",            # [linux]
+                           "WlShellIntegrationPrivate",      # [linux]
 ] %}
+# Qt libs that are have no public headers, skip include-dir checks
+{% set qt_libs_no_headers = [ "XcbQpa",
+] %}
+
 {% set win_prefix = "" %}          # [not win]
 {% set win_suffix = "" %}          # [not win]
 {% set win_prefix = "Library/" %}  # [win]
@@ -200,7 +219,7 @@ outputs:
       - "lib/libQt6*.prl"                        # [unix]
       - "lib/libQt6*.a"                          # [unix]
       - "Library/lib/Qt6*.prl"                   # [win]
-      - "Library/lib/Qt6*.lib"                   # [win
+      - "Library/lib/Qt6*.lib"                   # [win]
       {% for lib_name in qt_libs %}
       - lib/libQt6{{ lib_name }}{{ SHLIB_EXT }}  # [unix]
       {% endfor %}
@@ -219,6 +238,9 @@ outputs:
       - lib/qt6/qt-internal-configure-examples   # [unix]
       - lib/qt6/qt-internal-configure-tests      # [unix]
       - lib/qt6/qt-android-runner.py             # [unix]
+      - lib/qt6/qtwaylandscanner                 # [linux]
+      - share/qt6/wayland/protocols/**           # [linux]
+      - share/qt6/wayland/extensions/**          # [linux]
       - {{ win_prefix }}lib/qt6/ensure_pro_file.cmake
       - {{ win_prefix }}lib/qt6/qt-testrunner.py
       - {{ win_prefix }}lib/qt6/sanitizer-testrunner.py
@@ -242,7 +264,7 @@ outputs:
         - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
         - cmake
-        - ninja
+        - ninja-base
         - dbus {{ dbus }}  # [unix]
         - pkg-config       # [linux]
         # These are needed for linking, not runtime
@@ -254,10 +276,12 @@ outputs:
         - test/*
       commands:
         {% for lib_name in qt_libs %}
+        {% if lib_name not in qt_libs_no_headers %}
         - test -d $PREFIX/include/qt6/Qt{{ lib_name }}              # [unix]
-        - test -f $PREFIX/lib/libQt6{{ lib_name }}${SHLIB_EXT}      # [unix]
         - echo Checking for %LIBRARY_INC%\\qt6\\Qt{{ lib_name }}    # [win]
         - if not exist %LIBRARY_INC%\\qt6\\Qt{{ lib_name }} exit 1  # [win]
+        {% endif %}
+        - test -f $PREFIX/lib/libQt6{{ lib_name }}${SHLIB_EXT}      # [unix]
         - echo Checking for %LIBRARY_LIB%\\Qt6{{ lib_name }}.lib    # [win]
         - if not exist %LIBRARY_LIB%\\Qt6{{ lib_name }}.lib exit 1  # [win]
         {% endfor %}
