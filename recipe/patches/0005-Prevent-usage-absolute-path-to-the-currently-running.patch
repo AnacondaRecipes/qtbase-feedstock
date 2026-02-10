@@ -1,0 +1,33 @@
+From b07f54b0d29a919ce89ca3f38643dae579d52932 Mon Sep 17 00:00:00 2001
+From: Andrii Osipov <aosipov@anaconda.com>
+Date: Wed, 28 Jan 2026 02:04:09 -0800
+Subject: [PATCH] Prevent usage absolute path to the currently running
+ application executable
+
+---
+ src/corelib/kernel/qcoreapplication.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/corelib/kernel/qcoreapplication.cpp b/src/corelib/kernel/qcoreapplication.cpp
+index fbadad59..93dc9506 100644
+--- a/src/corelib/kernel/qcoreapplication.cpp
++++ b/src/corelib/kernel/qcoreapplication.cpp
+@@ -2463,13 +2463,13 @@ QString QCoreApplication::applicationFilePath()
+ 
+     if (!d->cachedApplicationFilePath.isNull())
+         return d->cachedApplicationFilePath;
+-
+     QString absPath = qAppFileName();
++#if 0
+     if (Q_LIKELY(!absPath.isEmpty())) {   // Darwin, FreeBSD, Linux, Windows
+         // the OS has canonicalized for us
+         return d->cachedApplicationFilePath = std::move(absPath);
+     }
+-
++#endif
+     if (const QStringList args = arguments(); !args.isEmpty()) {
+         const QString &argv0 = args[0];
+ 
+-- 
+2.39.3 (Apple Git-146)
+
