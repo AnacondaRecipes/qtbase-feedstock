@@ -16,7 +16,6 @@ cmake --log-level STATUS  -S"%SRC_DIR%/%PKG_NAME%" -B"%SRC_DIR%\build" -GNinja ^
     -DCMAKE_INSTALL_PREFIX="%LIBRARY_PREFIX%" ^
     -DQT_UNITY_BUILD=ON ^
     -DINSTALL_BINDIR=lib/qt6/bin ^
-    -DINSTALL_PUBLICBINDIR=bin ^
     -DINSTALL_LIBEXECDIR=lib/qt6 ^
     -DINSTALL_DOCDIR=share/doc/qt6 ^
     -DINSTALL_ARCHDATADIR=lib/qt6 ^

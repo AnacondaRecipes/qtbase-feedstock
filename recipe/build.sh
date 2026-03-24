@@ -23,6 +23,7 @@ if [[ "${target_platform}" == linux-* ]]; then
     -DQT_FEATURE_xkbcommon=ON
     -DQT_FEATURE_vulkan=ON
     -DQT_FEATURE_wayland=ON
+    -DFEATURE_liburing=OFF
   "
 else
   # TODO: Somehow set APPLICATION_EXTENSION_API_ONLY on OSX to avoid this?
