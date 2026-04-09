@@ -4,14 +4,14 @@ Date: Mon, 26 Jan 2026 02:55:44 -0800
 Subject: [PATCH] Set XCode version 15
 
 ---
- cmake/QtPublicAppleHelpers.cmake | 35 ++++++++++++++++----------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
+ cmake/QtPublicAppleHelpers.cmake | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
 diff --git a/cmake/QtPublicAppleHelpers.cmake b/cmake/QtPublicAppleHelpers.cmake
-index 3ffe53c6..ce4d9f52 100644
+index 5d90c454..f4ccba69 100644
 --- a/cmake/QtPublicAppleHelpers.cmake
 +++ b/cmake/QtPublicAppleHelpers.cmake
-@@ -929,23 +929,24 @@ function(_qt_internal_get_apple_sdk_version out_var)
+@@ -929,17 +929,18 @@ function(_qt_internal_get_apple_sdk_version out_var)
  endfunction()
  
  function(_qt_internal_get_xcode_version_raw out_var)
@@ -24,12 +24,6 @@ index 3ffe53c6..ce4d9f52 100644
 -
 -        string(REPLACE "\n" " " xcode_version "${xcode_version}")
 -        string(STRIP "${xcode_version}" xcode_version)
--
--        if(NOT xcode_version)
--            message(FATAL_ERROR
--                    "Can't determine Xcode version. Is Xcode installed?"
--                    " Error details:\n${xcrun_error}")
--        endif()
 -    endif()
 -    set(${out_var} "${xcode_version}" PARENT_SCOPE)
 +#    set(xcode_version "")
@@ -41,12 +35,6 @@ index 3ffe53c6..ce4d9f52 100644
 +#
 +#        string(REPLACE "\n" " " xcode_version "${xcode_version}")
 +#        string(STRIP "${xcode_version}" xcode_version)
-+#
-+#        if(NOT xcode_version)
-+#            message(FATAL_ERROR
-+#                    "Can't determine Xcode version. Is Xcode installed?"
-+#                    " Error details:\n${xcrun_error}")
-+#        endif()
 +#    endif()
 +#    set(${out_var} "${xcode_version}" PARENT_SCOPE)
 +    set(${out_var} "15.0" PARENT_SCOPE)
