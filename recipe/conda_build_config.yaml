@@ -24,3 +24,7 @@ cxx_compiler_version:  # [osx]
 
 CONDA_BUILD_SYSROOT:
   - /Library/Developer/CommandLineTools/SDKs/MacOSX14.5.sdk  # [osx]
+
+# rebuild for icu 78.3
+icu:
+  - 78.3
