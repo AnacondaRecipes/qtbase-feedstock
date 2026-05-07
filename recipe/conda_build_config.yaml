@@ -28,3 +28,5 @@ CONDA_BUILD_SYSROOT:
 # rebuild for icu 78.3
 icu:
   - 78.3
+libvulkan:
+  - 1.4.313
