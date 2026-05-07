@@ -77,7 +77,6 @@ requirements:
     - sqlite {{ sqlite }}
     - zlib {{ zlib }}
     - zstd {{ zstd }}
-    # Vulkan support
     - libvulkan-headers {{ libvulkan }}              # [not osx]
     - libvulkan-loader {{ libvulkan }}               # [not osx]
     # OpenGL support
