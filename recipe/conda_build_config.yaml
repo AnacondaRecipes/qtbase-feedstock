@@ -30,3 +30,7 @@ icu:
   - 78.3
 libvulkan:
   - 1.4.313
+libxml2:
+  - 2.14.4
+mesalib:
+  - 25.1.5
