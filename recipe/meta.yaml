@@ -29,7 +29,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 0
+  number: 1
   # https://doc.qt.io/qt-6/qt-releases.html#binary-compatibility
   # compiled against Qt 6.0.0 should still run with any other Qt 6 release
   run_exports:
@@ -77,7 +77,6 @@ requirements:
     - sqlite {{ sqlite }}
     - zlib {{ zlib }}
     - zstd {{ zstd }}
-    # Vulkan support
     - libvulkan-headers {{ libvulkan }}              # [not osx]
     - libvulkan-loader {{ libvulkan }}               # [not osx]
     # OpenGL support
