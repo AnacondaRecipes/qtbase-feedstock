@@ -29,7 +29,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 1
+  number: 2
   # https://doc.qt.io/qt-6/qt-releases.html#binary-compatibility
   # compiled against Qt 6.0.0 should still run with any other Qt 6 release
   run_exports:
@@ -69,7 +69,7 @@ requirements:
     - glib {{ glib }}
     - harfbuzz {{ harfbuzz }}
     - icu {{ icu }}
-    - jpeg {{ jpeg }}
+    - libjpeg-turbo {{ libjpeg_turbo }}
     - libpng {{ libpng }}
     - libpq {{ libpq }}
     - mysql-devel {{ mysql_libs }}
