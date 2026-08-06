@@ -32,5 +32,6 @@ libvulkan:
   - 1.4.313
 libxml2:
   - 2.14.4
+# rebuild for mesalib 26.1.6 (CVE-2026-40393 fix); remove this override once cbc.yaml pins an exact mesalib version
 mesalib:
-  - 25.1.5
+  - 26.1.6
