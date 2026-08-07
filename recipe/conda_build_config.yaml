@@ -35,3 +35,7 @@ libxml2:
 # rebuild for mesalib 26.1.6 (CVE-2026-40393 fix); remove this override once cbc.yaml pins an exact mesalib version
 mesalib:
   - 26.1.6
+
+# rebuild for libpq 18.4 (PKG-15957) - remove once root cbc.yaml libpq pin is bumped to 18.x
+libpq:
+  - 18.4
