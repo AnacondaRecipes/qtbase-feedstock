@@ -25,17 +25,5 @@ cxx_compiler_version:  # [osx]
 CONDA_BUILD_SYSROOT:
   - /Library/Developer/CommandLineTools/SDKs/MacOSX14.5.sdk  # [osx]
 
-# rebuild for icu 78.3
-icu:
-  - 78.3
 libvulkan:
   - 1.4.313
-libxml2:
-  - 2.14.4
-# rebuild for mesalib 26.1.6 (CVE-2026-40393 fix); remove this override once cbc.yaml pins an exact mesalib version
-mesalib:
-  - 26.1.6
-
-# rebuild for libpq 18.4 (PKG-15957) - remove once root cbc.yaml libpq pin is bumped to 18.x
-libpq:
-  - 18.4

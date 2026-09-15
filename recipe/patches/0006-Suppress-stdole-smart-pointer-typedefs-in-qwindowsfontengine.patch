@@ -1,0 +1,42 @@
+From 1eb8bcb1fa6a0e278b9f8d5d83110e324beabae9 Mon Sep 17 00:00:00 2001
+From: Eric Lundby <elundby@anaconda.com>
+Date: Tue, 15 Sep 2026 21:45:00 +0000
+Subject: [PATCH] Suppress stdole smart pointer typedefs in qwindowsfontengine
+
+The Gui target is built with QT_UNITY_BUILD=ON, so unity_6_cxx.cxx batches
+this file together with qcssparser.cpp in a single translation unit.
+comdef.h defines global smart pointer typedefs for the stdole types
+(Font, Picture, ...), which made the unqualified QCss::Property::Font in
+qcssparser.cpp ambiguous (error C2872), cascading into std::size/std::begin
+and q20::is_sorted failures (errors C2672).
+
+Nothing in this file needs the standard typedefs (only the exception helper
+is used), and the collision cannot be fixed from the other side in a unity
+build, so define _COM_NO_STANDARD_GUIDS_ before including comdef.h to
+suppress them.
+---
+ src/gui/text/windows/qwindowsfontengine.cpp | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/src/gui/text/windows/qwindowsfontengine.cpp b/src/gui/text/windows/qwindowsfontengine.cpp
+index 90d0cd5..31a4d3f 100644
+--- a/src/gui/text/windows/qwindowsfontengine.cpp
++++ b/src/gui/text/windows/qwindowsfontengine.cpp
+@@ -34,6 +34,14 @@
+ 
+ #if QT_CONFIG(directwrite)
+ #  include <dwrite.h>
++// comdef.h defines global smart pointer typedefs for the stdole types
++// (Font, Picture, ...) unless _COM_NO_STANDARD_GUIDS_ is set. Those globals
++// collide with unrelated Qt enum values (e.g. QCss::Property::Font) when
++// unity builds share this translation unit with them, and nothing here needs
++// them: only the exception helper is used.
++#  ifndef _COM_NO_STANDARD_GUIDS_
++#    define _COM_NO_STANDARD_GUIDS_
++#  endif
+ #  include <comdef.h>
+ #endif
+ 
+-- 
+2.39.5
+
