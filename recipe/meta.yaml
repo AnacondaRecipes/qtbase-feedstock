@@ -1,5 +1,5 @@
 {% set name = "qtbase" %}
-{% set version = "6.11.0" %}
+{% set version = "6.11.2" %}
 
 package:
   name: {{ name }}
@@ -7,7 +7,7 @@ package:
 
 source:
   - url: https://download.qt.io/official_releases/qt/{{ version.rpartition('.')[0] }}/{{ version }}/submodules/{{ name }}-everywhere-src-{{ version }}.tar.xz
-    sha256: 231ad85979864d914dc9568a1b71c91d6cf20d7b2021d059103bf0eb51cb755e
+    sha256: 5b2e00eccaf5a4d8c14134ffa0ea8dfd0a35ae1ffc7f8d87fa4305a1ed23cf22
     folder: {{ name }}
     patches:
       # https://doc.qt.io/qt-6/macos.html#supported-configurations
@@ -30,13 +30,17 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 5
+  number: 0
   # https://doc.qt.io/qt-6/qt-releases.html#binary-compatibility
   # compiled against Qt 6.0.0 should still run with any other Qt 6 release
   run_exports:
     - {{ pin_subpackage(name, max_pin='x.x') }}
   ignore_run_exports:
     - dbus     # [unix]
+    - libcxx        # [osx]
+    - ucrt          # [win]
+    - vc14_runtime  # [win]
+    - mysql-libs    # [win]
   missing_dso_whitelist:
     - '*/api-ms-win-shcore-scaling-l1-1-1.dll'     # [win]
     - '*/api-ms-win-core-winrt-l1-1-0.dll'         # [win]
