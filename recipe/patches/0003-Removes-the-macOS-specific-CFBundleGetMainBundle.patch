@@ -8,19 +8,19 @@ Subject: [PATCH] Removes the macOS-specific CFBundleGetMainBundle
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/corelib/global/qlibraryinfo.cpp b/src/corelib/global/qlibraryinfo.cpp
-index e8b954a7..4ab5d742 100644
+index 5945d5eea2d..bb44c19ff98 100644
 --- a/src/corelib/global/qlibraryinfo.cpp
 +++ b/src/corelib/global/qlibraryinfo.cpp
-@@ -108,7 +108,7 @@ static std::unique_ptr<QSettings> findConfiguration()
+@@ -214,7 +214,7 @@ static std::unique_ptr<QSettings> findConfiguration()
      QString qtconfig = QStringLiteral(":/qt/etc/qt.conf");
      if (QResource(qtconfig, QLocale::c()).isValid())
          return std::make_unique<QSettings>(qtconfig, QSettings::IniFormat);
--#ifdef Q_OS_DARWIN
-+/*#ifdef Q_OS_DARWIN
+-#if defined(Q_OS_APPLE)
++/*#if defined(Q_OS_APPLE)
      CFBundleRef bundleRef = CFBundleGetMainBundle();
      if (bundleRef) {
          QCFType<CFURLRef> urlRef = CFBundleCopyResourceURL(bundleRef,
-@@ -122,7 +122,7 @@ static std::unique_ptr<QSettings> findConfiguration()
+@@ -228,7 +228,7 @@ static std::unique_ptr<QSettings> findConfiguration()
                  return std::make_unique<QSettings>(qtconfig, QSettings::IniFormat);
          }
      }
@@ -29,6 +29,3 @@ index e8b954a7..4ab5d742 100644
      if (QCoreApplication::instanceExists()) {
          QString pwd = QCoreApplication::applicationDirPath();
          qtconfig = pwd + u"/qt" QT_STRINGIFY(QT_VERSION_MAJOR) ".conf"_s;
--- 
-2.39.3 (Apple Git-146)
-

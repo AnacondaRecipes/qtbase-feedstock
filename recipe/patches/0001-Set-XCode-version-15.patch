@@ -8,10 +8,10 @@ Subject: [PATCH] Set XCode version 15
  1 file changed, 12 insertions(+), 11 deletions(-)
 
 diff --git a/cmake/QtPublicAppleHelpers.cmake b/cmake/QtPublicAppleHelpers.cmake
-index 5d90c454..f4ccba69 100644
+index e433f970489..054bc5e835c 100644
 --- a/cmake/QtPublicAppleHelpers.cmake
 +++ b/cmake/QtPublicAppleHelpers.cmake
-@@ -929,17 +929,18 @@ function(_qt_internal_get_apple_sdk_version out_var)
+@@ -951,17 +951,7 @@ function(_qt_internal_get_apple_sdk_version out_var)
  endfunction()
  
  function(_qt_internal_get_xcode_version_raw out_var)
@@ -26,21 +26,7 @@ index 5d90c454..f4ccba69 100644
 -        string(STRIP "${xcode_version}" xcode_version)
 -    endif()
 -    set(${out_var} "${xcode_version}" PARENT_SCOPE)
-+#    set(xcode_version "")
-+#    if(APPLE)
-+#        _qt_internal_execute_xcrun(xcode_version
-+#            XCRUN_ARGS xcodebuild -version
-+#            OUT_ERROR_VAR xcrun_error
-+#        )
-+#
-+#        string(REPLACE "\n" " " xcode_version "${xcode_version}")
-+#        string(STRIP "${xcode_version}" xcode_version)
-+#    endif()
-+#    set(${out_var} "${xcode_version}" PARENT_SCOPE)
 +    set(${out_var} "15.0" PARENT_SCOPE)
  endfunction()
  
  function(_qt_internal_get_xcode_version out_var)
--- 
-2.39.3 (Apple Git-146)
-

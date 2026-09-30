@@ -8,26 +8,25 @@ Subject: [PATCH] Handle library location path for Windows builds
  1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/cmake/QtQmakeHelpers.cmake b/cmake/QtQmakeHelpers.cmake
-index c1dbb0d5..65696520 100644
+index f780332bfef..bdf6fb720f2 100644
 --- a/cmake/QtQmakeHelpers.cmake
 +++ b/cmake/QtQmakeHelpers.cmake
-@@ -46,7 +46,15 @@ function(qt_generate_qconfig_cpp in_file out_file)
+@@ -53,7 +53,15 @@ function(qt_generate_qconfig_cpp in_file out_file)
+     else()
+         file(RELATIVE_PATH from_lib_location_to_prefix
+             "${lib_location_absolute_path}" "${QT_BUILD_INTERNALS_RELOCATABLE_INSTALL_PREFIX}")
+-        set(QT_CONFIGURE_LIBLOCATION_TO_PREFIX_PATH "${from_lib_location_to_prefix}")
++        if(WIN32)
++          # In conda-forge, the .dll are manually copied from <install_prefix>/lib/qt6/bin to
++          # <install_prefix>/bin after the CMake install, and the one actually loaded by the loader
++          # are the one in <install_prefix>/bin, so we hardcode the QT_CONFIGURE_LIBLOCATION_TO_PREFIX_PATH
++          # to be .., to avoid issues like https://github.com/conda-forge/qt-main-feedstock/issues/275
++          set(QT_CONFIGURE_LIBLOCATION_TO_PREFIX_PATH "..")
++        else()
++          set(QT_CONFIGURE_LIBLOCATION_TO_PREFIX_PATH "${from_lib_location_to_prefix}")
++        endif()
      endif()
-     file(RELATIVE_PATH from_lib_location_to_prefix
-          "${lib_location_absolute_path}" "${QT_BUILD_INTERNALS_RELOCATABLE_INSTALL_PREFIX}")
--    set(QT_CONFIGURE_LIBLOCATION_TO_PREFIX_PATH "${from_lib_location_to_prefix}")
-+    if(WIN32)
-+      # In conda-forge, the .dll are manually copied from <install_prefix>/lib/qt6/bin to
-+      # <install_prefix>/bin after the CMake install, and the one actually loaded by the loader
-+      # are the one in <install_prefix>/bin, so we hardcode the QT_CONFIGURE_LIBLOCATION_TO_PREFIX_PATH
-+      # to be .., to avoid issues like https://github.com/conda-forge/qt-main-feedstock/issues/275
-+      set(QT_CONFIGURE_LIBLOCATION_TO_PREFIX_PATH "..")
-+    else()
-+      set(QT_CONFIGURE_LIBLOCATION_TO_PREFIX_PATH "${from_lib_location_to_prefix}")
-+    endif()
- 
-     # Ensure Windows drive letter is prepended to the install prefix hardcoded
-     # into qconfig.cpp, otherwise qmake can't find Qt modules in a static Qt
--- 
-2.39.3 (Apple Git-146)
+     if(QT_FEATURE_relocatable AND (NOT APPLE OR BUILD_SHARED_LIBS))
+         # A relocatable Qt does not need a hardcoded prefix path. Unless
+
 
