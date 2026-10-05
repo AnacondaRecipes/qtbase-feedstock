@@ -61,7 +61,7 @@ requirements:
     - msys2-bison    # [win]
     - msys2-flex     # [win]
     - msys2-gperf    # [win]
-    - cmake >=3.22
+    - cmake >=3.25
     - ninja-base
     - perl
   host:
