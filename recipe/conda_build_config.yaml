@@ -27,3 +27,7 @@ CONDA_BUILD_SYSROOT:
 
 libvulkan:
   - 1.4.313
+
+# rebuild for pcre2 10.49 (CVE-2026-103111 fix); remove this override once cbc.yaml pins pcre2 >=10.49
+pcre2:
+  - 10.49
