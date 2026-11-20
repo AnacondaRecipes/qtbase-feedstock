@@ -30,7 +30,7 @@ source:
     folder: opengl32sw                                                                                         # [win]
 
 build:
-  number: 1
+  number: 2
   # https://doc.qt.io/qt-6/qt-releases.html#binary-compatibility
   # compiled against Qt 6.0.0 should still run with any other Qt 6 release
   run_exports:
@@ -250,15 +250,11 @@ outputs:
       - {{ win_prefix }}lib/qt6/sanitizer-testrunner.py
       - {{ win_prefix }}lib/qt6/syncqt{{ win_suffix }}
       - Library/lib/qt6/syncqt.pdb               # [win]
-      - {{ win_prefix }}lib/qt6/moc{{ win_suffix }}
-      - {{ win_prefix }}lib/qt6/rcc{{ win_suffix }}
       - {{ win_prefix }}lib/qt6/tracepointgen{{ win_suffix }}
       - {{ win_prefix }}lib/qt6/tracegen{{ win_suffix }}
       - {{ win_prefix }}lib/qt6/cmake_automoc_parser{{ win_suffix }}
-      - {{ win_prefix }}lib/qt6/uic{{ win_suffix }}
       - {{ win_prefix }}lib/qt6/qlalr{{ win_suffix }}
       - {{ win_prefix }}lib/qt6/qvkgen{{ win_suffix }}
-      - {{ win_prefix }}lib/qt6/uic{{ win_suffix }}
       - {{ win_prefix }}lib/qt6/metatypes
       - {{ win_prefix }}lib/qt6/mkspecs
       - {{ win_prefix }}lib/qt6/modules
@@ -273,6 +269,10 @@ outputs:
         - pkg-config       # [linux]
         # These are needed for linking, not runtime
         - libxkbcommon     # [linux]
+        # moc (and uic/rcc when needed) now live in qttools (AnacondaRecipes/qttools-feedstock#12);
+        # Test CMakeLists sets CMAKE_AUTOMOC=ON and test_test.cpp uses Q_OBJECT,
+        # so the test build requires the moc binary produced by qttools.
+        - {{ pin_compatible('qttools', max_pin='x.x.x') }}
       files:
         - run_qt_test.sh    # [unix]
         - run_qt_test.bat   # [win]
